@@ -17,16 +17,19 @@ import java.util.Date;
 public class Payment implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String paymentID;
 
     private Date paymentDate;
     private int amount;
+
+    @Enumerated(EnumType.STRING)
     private Method paymentMethod;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 }

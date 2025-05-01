@@ -35,11 +35,9 @@ public class User {
 
     private String role;
 
-    @OneToMany
-    @JoinColumn(name = "payment_id")
+    @OneToMany(mappedBy = "user")
     private List<Payment> payments;
 
-    @OneToMany
-    @JoinColumn(name = "reservation_id")
+    @OneToMany(mappedBy = "user")
     private List<Reservation> reservations;
 }
