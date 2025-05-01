@@ -16,13 +16,14 @@ import java.util.List;
 public class ParkingSpot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String parkingSpotID;
 
     private String location;
+
+    @Enumerated(EnumType.STRING)
     private ParkingSpotStatus status;
 
-    @OneToOne
-    private Reservation reservations;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    private Reservation reservations;
 
 }
