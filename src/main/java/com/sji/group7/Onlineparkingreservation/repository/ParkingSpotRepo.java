@@ -1,4 +1,7 @@
 package com.sji.group7.Onlineparkingreservation.repository;
 
-public class ParkingSpotRepo {
+import com.sji.group7.Onlineparkingreservation.model.ParkingSpot;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ParkingSpotRepo extends JpaRepository<ParkingSpot,String> {
 }
