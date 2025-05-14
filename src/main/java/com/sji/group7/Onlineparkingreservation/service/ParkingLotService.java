@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ParkingSpotService {
+public class ParkingLotService {
 
     @Autowired
     private ParkingLotRepo parkingLotRepo;
@@ -18,11 +18,11 @@ public class ParkingSpotService {
         return parkingLotRepo.save(parkingLot);
     }
 
-    public List<ParkingLot> getParkingLots() {
-        return parkingLotRepo.findAll();
+    public List<ParkingLot> getAllParkingLots() {
+        return parkingLotRepo.findAll();}
+
+    public Optional<ParkingLot> getParkingLotById(String id) {
+        return parkingLotRepo.findById(id);
     }
 
-    public Optional<ParkingLot> getParkingLot(String parkingLotID) {
-        return parkingLotRepo.findById(parkingLotID);
-    }
 }
