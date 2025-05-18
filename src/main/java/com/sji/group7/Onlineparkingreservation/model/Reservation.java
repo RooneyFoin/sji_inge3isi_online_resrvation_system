@@ -8,32 +8,56 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
 public class Reservation implements Serializable {
 
     @Id
-    private String reservationID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer reservationID;
 
-    private Date date;
-    private Time startTime;
-    private Time endTime;
+    //The date and time at which the reservation is made
+    @Column(name = "`current_date`")
+    private LocalDateTime currentDate;
 
-    @Enumerated(EnumType.STRING)
-    private ReservationState state;
+    //The date for which the reservation is made
+    @Column(name = "`reservation_date`")
+    private LocalDate reservationDate;
 
-    private int price;
+    //The location of the spot
+    private String location;
+
+    //The starting time of the reservation
+    @Column(name = "`start_time`")
+    private LocalTime startTime;
+
+    //The time at which the reservation ends
+    @Column(name = "`end_time`")
+    private LocalTime endTime;
+
+    //The duration is calculated from the above two times
+    //We can instead ask the user to enter the number of hours he/she will spend
+    // at the spot and instead save that
+    private int duration;
+
+//    @Enumerated(EnumType.STRING)
+//    private ReservationState state;
+
+    private int cost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parking_spot_id")
-    private ParkingSpot parkingSpot;
+    @JoinColumn(name = "parkingLot_id")
+    private ParkingLot parkingLot;
 }

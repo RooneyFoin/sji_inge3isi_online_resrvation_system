@@ -1,8 +1,6 @@
 package com.sji.group7.Onlineparkingreservation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,9 +16,12 @@ import java.util.List;
 public class ParkingLot {
 
     @Id
-    private String parkingLotID;
+    private Integer parkingLotID;
 
-    private String location;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
+
     private int totalSpots;
 
 //    @OneToMany

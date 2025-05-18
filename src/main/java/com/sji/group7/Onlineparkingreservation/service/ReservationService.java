@@ -18,7 +18,7 @@ public class ReservationService {
         return reservationRepo.save(reservation);
     }
 
-    public Optional<Reservation> getReservationById(String reservationID) {
+    public Optional<Reservation> getReservationById(Integer reservationID) {
         return reservationRepo.findById(reservationID);
     }
 

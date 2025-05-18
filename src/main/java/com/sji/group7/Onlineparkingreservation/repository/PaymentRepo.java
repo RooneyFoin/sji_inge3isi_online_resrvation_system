@@ -16,6 +16,6 @@ public interface PaymentRepo extends JpaRepository<Payment,String> {
 
     Payment findPaymentByReservation(Reservation reservation);
 
-    Payment findPaymentByReservation_ReservationID(String reservationReservationID);
+    Payment findPaymentByReservation_ReservationID(Integer reservation_reservationID);
 
 }
