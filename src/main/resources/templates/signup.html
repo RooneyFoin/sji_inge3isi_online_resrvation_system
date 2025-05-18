@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -610,7 +610,7 @@
 
 
 
-    <form id="registration-form">
+    <form th:action="@{/signup}" th:object="${user}" method="post" id="registration-form">
       <!-- Personal Information Section -->
       <div class="form-section">
         <h3><i class="fas fa-user"></i> Personal Information</h3>
@@ -618,12 +618,12 @@
         <div class="form-row">
           <div class="form-group">
             <label for="first-name">First Name</label>
-            <input type="text" id="first-name" required>
+            <input type="text" id="first-name" th:field="*{name}" required>
             <i class="fas fa-user"></i>
           </div>
           <div class="form-group">
             <label for="last-name">Last Name</label>
-            <input type="text" id="last-name" required>
+            <input type="text" id="last-name" placeholder="(optional)">
             <i class="fas fa-user"></i>
           </div>
         </div>
@@ -631,12 +631,12 @@
         <div class="form-row">
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" required>
+            <input type="email" id="email" th:field="*{email}" required>
             <i class="fas fa-envelope"></i>
           </div>
           <div class="form-group">
             <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" required>
+            <input type="tel" id="phone" th:field="*{phone}" required>
             <i class="fas fa-phone"></i>
           </div>
         </div>
@@ -649,7 +649,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" required>
+            <input type="text" id="username" th:field="*{username}" required>
             <i class="fas fa-user-circle"></i>
           </div>
         </div>
@@ -657,7 +657,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" required>
+            <input type="password" id="password" th:field="*{password}" required>
             <i class="fas fa-lock"></i>
           </div>
           <div class="form-group">
@@ -668,7 +668,7 @@
         </div>
       </div>
 
-
+      <!-- Terms and Submit -->
       <div class="terms-container">
         <input type="checkbox" id="terms" required>
         <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
@@ -680,59 +680,49 @@
       </button>
 
       <div class="login-link">
-        Already have an account? <a href="./login.html">Sign in</a>
+        Already have an account? <a th:href="@{/login}">Sign in</a>
+      </div>
+
+      <!-- Show error if email exists -->
+      <div th:if="${error}" style="color: red; margin-top: 10px;">
+        <p th:text="${error}"></p>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-  document.getElementById('registration-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("registration-form");
+    const button = document.querySelector(".btn-register");
 
-    // Simple form validation for demonstration
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
+    form.addEventListener("submit", function (e) {
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
 
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return false;
-    }
+      // Password confirmation check
+      if (password !== confirmPassword) {
+        e.preventDefault(); // Stop form submission
+        alert("Passwords do not match!");
+        return false;
+      }
 
-    // Add a simple success animation
-    const button = document.querySelector('.btn-register');
-    button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Creating Account...';
-    button.disabled = true;
+      // Show loading animation
+      button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Creating Account...';
+      button.disabled = true;
+    });
 
-    // Simulate registration process
-    setTimeout(() => {
-      button.innerHTML = '<i class="fas fa-check"></i> Success!';
-      button.style.background = '#27ae60';
-
-      // Show next steps
-      setTimeout(() => {
-        alert('Account created successfully! Please proceed to Step 2: Vehicle Information.');
-        // In a real app, you would move to the next form step here
-
-        // Reset button for demo
-        setTimeout(() => {
-          button.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
-          button.style.background = '';
-          button.disabled = false;
-        }, 1000);
-      }, 1000);
-    }, 2000);
-  });
-
-  // Step indicator functionality
-  const steps = document.querySelectorAll('.step');
-  steps.forEach(step => {
-    step.addEventListener('click', function() {
-      steps.forEach(s => s.classList.remove('active'));
-      this.classList.add('active');
-      // In a real app, you would show/hide the appropriate form sections here
+    // Optional: Step indicator logic if using step progress UI
+    const steps = document.querySelectorAll('.step');
+    steps.forEach(step => {
+      step.addEventListener('click', function () {
+        steps.forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+        // Add logic here to show/hide sections if needed
+      });
     });
   });
 </script>
+
 </body>
 </html>
