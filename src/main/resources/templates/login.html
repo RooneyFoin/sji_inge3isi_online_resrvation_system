@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parking Reservation System - Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">-->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -602,14 +602,14 @@
             <p>Please sign in to your account to continue</p>
         </div>
 
-        <form id="login-form">
+        <form id="login-form" action="/perform_login" method="post">
             <div class="form-group">
-                <input type="email" id="email" placeholder="Email Address" required>
+                <label for="username"></label><input type="text" id="username" name="username" placeholder="Username" required>
                 <i class="fas fa-envelope"></i>
             </div>
 
             <div class="form-group">
-                <input type="password" id="password" placeholder="Password" required>
+                <label for="password"></label><input type="password" id="password" name="password" placeholder="Password" required>
                 <i class="fas fa-lock"></i>
             </div>
 
@@ -627,7 +627,7 @@
             </button>
 
             <div class="register-link">
-                Don't have an account? <a href="./signup.html">Register now</a>
+                Don't have an account? <a href="/signup">Register now</a>
             </div>
 
             <div class="social-login">
@@ -648,32 +648,27 @@
 </div>
 
 <script>
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Here you would typically handle the login logic
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("login-form");
+        const button = document.querySelector(".btn-login");
 
-        console.log('Login attempt:', { email, password });
-        // Add your authentication logic here
+        form.addEventListener("submit", function (e) {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-        // Add a simple animation effect when submitting
-        const button = document.querySelector('.btn-login');
-        button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing In...';
-        button.disabled = true;
+            if (!email || !password) {
+                e.preventDefault(); // prevent submission if fields are empty
+                alert("Please enter both email and password.");
+                return;
+            }
 
-        // Simulate login process
-        setTimeout(() => {
-            button.innerHTML = '<i class="fas fa-check"></i> Success!';
-            button.style.background = '#27ae60';
+            // Show spinner animation
+            button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing In...';
+            button.disabled = true;
 
-            // Reset after demo
-            setTimeout(() => {
-                button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-                button.style.background = '';
-                button.disabled = false;
-            }, 2000);
-        }, 1500);
+            // Let Spring Security handle the authentication with a POST to /perform_login
+            // DO NOT prevent default unless using AJAX
+        });
     });
 </script>
 </body>
