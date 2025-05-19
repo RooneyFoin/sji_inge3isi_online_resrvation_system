@@ -48,6 +48,9 @@ public class Reservation implements Serializable {
     @Enumerated(EnumType.STRING)
     private ReservationState state;
 
+    @Column(nullable = false,  columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean deleted = Boolean.FALSE;
+
     private int cost;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,4 +64,7 @@ public class Reservation implements Serializable {
     @ManyToOne
     @JoinColumn(name = "spot_id")
     private ParkingSpot parkingSpot;
+
+    private LocalDateTime cancelledAt;
+    private LocalDateTime deletedAt;
 }

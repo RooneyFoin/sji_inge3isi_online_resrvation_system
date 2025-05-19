@@ -9,10 +9,7 @@ import com.sji.group7.Onlineparkingreservation.service.ParkingLotService;
 import com.sji.group7.Onlineparkingreservation.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,5 +55,30 @@ public class ReservationApi {
 
         Reservation reserved = reservationService.saveReservation(reserve);
         return ResponseEntity.ok(reserved);
+    }
+
+    //used to cancel a reservation but needs to be checked when the front end will be available
+    @PatchMapping("/cancel-reservation")
+    public ResponseEntity<Void> cancelReservation(Integer reservationId) {
+
+       reservationService.cancelReservation(reservationId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete-reservation")
+    public ResponseEntity<Void> deleteReservation(Integer reservationId) {
+
+        reservationService.deleteReservation(reservationId);
+        return ResponseEntity.noContent().build();
+    }
+
+    //this get mapping is for the users to view just the reservations
+    // they have not deleted from their history
+    //it still has to be fixed so that it fetches just for a particular user
+    @GetMapping("/history")
+    public ResponseEntity<List<Reservation>> getAllReservations() {
+
+        List<Reservation> reservations = reservationService.getActiveReservations();
+        return ResponseEntity.ok(reservations);
     }
 }
