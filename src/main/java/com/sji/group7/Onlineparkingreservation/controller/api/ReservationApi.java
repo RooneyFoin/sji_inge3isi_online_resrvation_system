@@ -3,6 +3,7 @@ package com.sji.group7.Onlineparkingreservation.controller.api;
 import com.sji.group7.Onlineparkingreservation.dtos.LocationDto;
 import com.sji.group7.Onlineparkingreservation.model.Location;
 import com.sji.group7.Onlineparkingreservation.model.Reservation;
+import com.sji.group7.Onlineparkingreservation.model.ReservationState;
 import com.sji.group7.Onlineparkingreservation.service.LocationService;
 import com.sji.group7.Onlineparkingreservation.service.ParkingLotService;
 import com.sji.group7.Onlineparkingreservation.service.ReservationService;
@@ -52,6 +53,7 @@ public class ReservationApi {
         reserve.setStartTime(reservation.getStartTime());
         reserve.setEndTime(reservation.getEndTime());
         reserve.setDuration(reservation.getDuration());
+        reserve.setState(ReservationState.Confirmed);
         reserve.setCost(reservation.getCost());
 
         Reservation reserved = reservationService.saveReservation(reserve);

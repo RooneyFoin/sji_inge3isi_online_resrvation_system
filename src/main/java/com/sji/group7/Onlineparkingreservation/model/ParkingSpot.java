@@ -25,8 +25,8 @@ public class ParkingSpot {
     @JoinColumn(name = "parkingLot_id")
     private ParkingLot parkingLot;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "reservation_id")
+//    private List<Reservation> reservation;
 
 }

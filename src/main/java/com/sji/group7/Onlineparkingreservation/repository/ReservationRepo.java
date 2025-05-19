@@ -1,11 +1,9 @@
 package com.sji.group7.Onlineparkingreservation.repository;
 
-import com.sji.group7.Onlineparkingreservation.model.ParkingLot;
-import com.sji.group7.Onlineparkingreservation.model.ParkingSpot;
-import com.sji.group7.Onlineparkingreservation.model.ParkingSpotStatus;
-import com.sji.group7.Onlineparkingreservation.model.Reservation;
+import com.sji.group7.Onlineparkingreservation.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -16,4 +14,5 @@ public interface ReservationRepo extends JpaRepository<Reservation,Integer> {
 
     List<Reservation> findReservationsByParkingLot_ParkingLotID(Integer parkingSpotID);
 
+    List<Reservation> findReservationsByStateAndEndTimeBefore(ReservationState state, LocalTime endTime);
 }

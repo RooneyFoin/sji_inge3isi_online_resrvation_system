@@ -43,13 +43,10 @@ public class Reservation implements Serializable {
     @Column(name = "`end_time`")
     private LocalTime endTime;
 
-    //The duration is calculated from the above two times
-    //We can instead ask the user to enter the number of hours he/she will spend
-    // at the spot and instead save that
     private int duration;
 
-//    @Enumerated(EnumType.STRING)
-//    private ReservationState state;
+    @Enumerated(EnumType.STRING)
+    private ReservationState state;
 
     private int cost;
 
@@ -60,4 +57,8 @@ public class Reservation implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parkingLot_id")
     private ParkingLot parkingLot;
+
+    @ManyToOne
+    @JoinColumn(name = "spot_id")
+    private ParkingSpot parkingSpot;
 }
