@@ -33,7 +33,7 @@ public class Reservation implements Serializable {
     private LocalDate reservationDate;
 
     //The location of the spot
-    private String location;
+//    private String location;
 
     //The starting time of the reservation
     @Column(name = "`start_time`")

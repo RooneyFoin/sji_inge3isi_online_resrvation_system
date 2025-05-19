@@ -1,6 +1,8 @@
 package com.sji.group7.Onlineparkingreservation.service;
 
 import com.sji.group7.Onlineparkingreservation.dtos.ParkingLotDto;
+import com.sji.group7.Onlineparkingreservation.dtos.ParkingSpotDto;
+import com.sji.group7.Onlineparkingreservation.model.Location;
 import com.sji.group7.Onlineparkingreservation.model.ParkingLot;
 import com.sji.group7.Onlineparkingreservation.model.ParkingSpot;
 import com.sji.group7.Onlineparkingreservation.repository.ParkingLotRepo;
@@ -8,6 +10,7 @@ import com.sji.group7.Onlineparkingreservation.repository.ParkingSpotRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,9 @@ public class ParkingLotService {
     @Autowired
     private ParkingSpotRepo parkingSpotRepo;
 
+    @Autowired
+    private ParkingSpotService parkingSpotService;
+
     public ParkingLot save(ParkingLot parkingLot) {
         return parkingLotRepo.save(parkingLot);
     }
@@ -31,14 +37,21 @@ public class ParkingLotService {
         return parkingLotRepo.findById(id);
     }
 
-    public ParkingLotDto toparkingLotDto(ParkingLot parkingLot) {
+    public List<ParkingLot> getParkingLotsByLocation(Location location) {
+        return parkingLotRepo.findParkingLotsByLocation(location);
+    }
+
+    public ParkingLotDto toDto(ParkingLot parkingLot) {
         List<ParkingSpot> spots = parkingSpotRepo.findParkingSpotsByParkingLot(parkingLot);
+        List<ParkingSpotDto> spotDTO = new ArrayList<>();
+        for (ParkingSpot spot : spots) {
+            spotDTO.add(parkingSpotService.toDto(spot));
+        }
 
         return ParkingLotDto.builder()
                 .parkingLotID(parkingLot.getParkingLotID())
-                .location(parkingLot.getLocation())
-                .totalSpots(parkingLot.getTotalSpots())
-                .parkingSpots(spots)
+                .totalSpots(spotDTO.size())
+                .parkingSpots(spotDTO)
                 .build();
     }
 
