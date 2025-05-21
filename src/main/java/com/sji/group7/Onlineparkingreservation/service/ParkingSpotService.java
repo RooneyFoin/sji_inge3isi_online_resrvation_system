@@ -4,6 +4,7 @@ import com.sji.group7.Onlineparkingreservation.dtos.ParkingSpotDto;
 import com.sji.group7.Onlineparkingreservation.model.ParkingLot;
 import com.sji.group7.Onlineparkingreservation.model.ParkingSpot;
 import com.sji.group7.Onlineparkingreservation.repository.ParkingLotRepo;
+import com.sji.group7.Onlineparkingreservation.repository.ParkingSpotRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +15,26 @@ import java.util.Optional;
 public class ParkingSpotService {
 
     @Autowired
-    private ParkingLotRepo parkingLotRepo;
+    private ParkingSpotRepo parkingSpotRepo;
 
-    public ParkingLot save(ParkingLot parkingLot) {
-        return parkingLotRepo.save(parkingLot);
+    public List<ParkingSpot> saveAll(List<ParkingSpot> parkingSpots) {
+        return parkingSpotRepo.saveAll(parkingSpots);
     }
 
-    public List<ParkingLot> getParkingLots() {
-        return parkingLotRepo.findAll();
+    public ParkingSpot save(ParkingSpot parkingSpot){
+        return parkingSpotRepo.save(parkingSpot);
     }
 
-    public Optional<ParkingLot> getParkingLot(String parkingLotID) {
-        return parkingLotRepo.findById(parkingLotID);
+    public List<ParkingSpot> getAllParkingSpots() {
+        return parkingSpotRepo.findAll();
+    }
+
+    public Optional<ParkingSpot> getParkingSpot(String parkingSpotID) {
+        return parkingSpotRepo.findById(parkingSpotID);
+    }
+
+    public ParkingSpot getParkingSpotById(String parkingSpotID) {
+        return parkingSpotRepo.findById(parkingSpotID).get();
     }
 
     public ParkingSpotDto toDto(ParkingSpot parkingSpot) {

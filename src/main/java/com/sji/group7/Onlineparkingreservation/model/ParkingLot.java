@@ -16,7 +16,7 @@ import java.util.List;
 public class ParkingLot {
 
     @Id
-    private Integer parkingLotID;
+    private String parkingLotID;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")

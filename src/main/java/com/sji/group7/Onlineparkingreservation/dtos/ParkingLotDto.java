@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 public class ParkingLotDto {
 
-    private Integer parkingLotID;
+    private String parkingLotID;
     private int totalSpots;
     private List<ParkingSpotDto> parkingSpots;
 

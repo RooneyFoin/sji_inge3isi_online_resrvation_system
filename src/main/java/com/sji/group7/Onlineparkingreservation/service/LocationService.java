@@ -25,6 +25,14 @@ public class LocationService {
         return locationRepo.findAll();
     }
 
+    public Location saveLocation(Location location){
+        return locationRepo.save(location);
+    }
+
+    public Location getLocationByLocationName(String locationName){
+        return locationRepo.findLocationByLocationName(locationName);
+    }
+
     public Location getLocationById(Integer id){
         return locationRepo.findById(id).get();
     }

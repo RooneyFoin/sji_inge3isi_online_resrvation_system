@@ -10,7 +10,7 @@ public interface ParkingSpotRepo extends JpaRepository<ParkingSpot,String> {
 
     List<ParkingSpot> findParkingSpotsByParkingLot(ParkingLot parkingLot);
 
-    List<ParkingSpot> findParkingSpotsByParkingLot_ParkingLotID(Integer parkingLotParkingLotID);
+    List<ParkingSpot> findParkingSpotsByParkingLot_ParkingLotID(String parkingLotParkingLotID);
 
     ParkingSpot findParkingSpotByParkingSpotID(String parkingSpotID);
 
