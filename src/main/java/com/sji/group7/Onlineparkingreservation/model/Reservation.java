@@ -29,8 +29,11 @@ public class Reservation implements Serializable {
     private LocalDateTime currentDate;
 
     //The date for which the reservation is made
-    @Column(name = "`reservation_date`")
-    private LocalDate reservationDate;
+    @Column(name = "`reservation_start_date`")
+    private LocalDate reservationStartDate;
+
+    @Column(name = "`reservation_end_date`")
+    private LocalDate reservationEndDate;
 
     //The location of the spot
 //    private String location;
@@ -57,7 +60,7 @@ public class Reservation implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parkingLot_id")
     private ParkingLot parkingLot;
 

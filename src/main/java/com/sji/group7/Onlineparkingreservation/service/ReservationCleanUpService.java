@@ -7,16 +7,20 @@ import com.sji.group7.Onlineparkingreservation.model.ReservationState;
 import com.sji.group7.Onlineparkingreservation.repository.ParkingSpotRepo;
 import com.sji.group7.Onlineparkingreservation.repository.ReservationRepo;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 @Service
 public class ReservationCleanUpService {
 
+    private static final Logger log = LoggerFactory.getLogger(ReservationCleanUpService.class);
     @Autowired
     private ReservationRepo reservationRepo;
 
@@ -26,21 +30,42 @@ public class ReservationCleanUpService {
     @Scheduled(fixedRate = 5*60*1000)
     @Transactional
     public void releaseExpiredSpots(){
-        List<Reservation> expiredReservations = reservationRepo.
-                findReservationsByStateAndEndTimeBefore(ReservationState.Confirmed, LocalTime.now());
 
-        expiredReservations.addAll(reservationRepo.
-                findReservationsByStateAndEndTimeBefore(ReservationState.Cancelled, LocalTime.now()));
+        try {
+            log.info("Checking for expired reservations...");
+            List<Reservation> expiredReservations = reservationRepo.
+                    findReservationsByStateAndEndTimeBeforeAndReservationEndDateIsLessThanEqual(ReservationState.Confirmed,
+                            LocalTime.now(), LocalDate.now());
 
-        expiredReservations.forEach(reservation -> {
-            ParkingSpot spot = reservation.getParkingSpot();
-            if(spot != null){
-                spot.setStatus(ParkingSpotStatus.Available);
-                reservation.setState(ReservationState.Completed);
-                parkingSpotRepo.save(spot);
-                reservationRepo.save(reservation);
+            if (expiredReservations.isEmpty()) {
+                log.info("No expired reservations found.");
             }
-        });
+
+            expiredReservations.addAll(reservationRepo.
+                    findReservationsByStateAndEndTimeBeforeAndReservationEndDateIsLessThanEqual(ReservationState.Cancelled,
+                            LocalTime.now(), LocalDate.now()));
+
+            if (expiredReservations.isEmpty()) {
+                log.info("No expired reservations found.");
+            }
+
+//            entityManager.flush(); // Force SQL execution
+            log.info("Released {} spots", expiredReservations.size());
+
+            expiredReservations.forEach(reservation -> {
+                ParkingSpot spot = reservation.getParkingSpot();
+                if (spot != null) {
+                    spot.setStatus(ParkingSpotStatus.Available);
+                    reservation.setState(ReservationState.Completed);
+                    parkingSpotRepo.saveAndFlush(spot);
+                    reservationRepo.saveAndFlush(reservation);
+
+                    log.info("Released {} spots", expiredReservations.size());
+                }
+            });
+        }catch (Exception e) {
+            log.error("Task failed", e);  // ← Critical for debugging
+        }
 
     }
 

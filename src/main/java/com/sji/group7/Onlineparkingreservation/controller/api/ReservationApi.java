@@ -1,11 +1,11 @@
 package com.sji.group7.Onlineparkingreservation.controller.api;
 
 import com.sji.group7.Onlineparkingreservation.dtos.LocationDto;
-import com.sji.group7.Onlineparkingreservation.model.Location;
-import com.sji.group7.Onlineparkingreservation.model.Reservation;
-import com.sji.group7.Onlineparkingreservation.model.ReservationState;
+import com.sji.group7.Onlineparkingreservation.dtos.ReservationDto;
+import com.sji.group7.Onlineparkingreservation.model.*;
 import com.sji.group7.Onlineparkingreservation.service.LocationService;
 import com.sji.group7.Onlineparkingreservation.service.ParkingLotService;
+import com.sji.group7.Onlineparkingreservation.service.ParkingSpotService;
 import com.sji.group7.Onlineparkingreservation.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@RestController
+@RestController("/reservation")
 public class ReservationApi {
 
     @Autowired
     private ParkingLotService parkingLotService;
+
+    @Autowired
+    private ParkingSpotService parkingSpotService;
 
     @Autowired
     private LocationService locationService;
@@ -42,31 +46,44 @@ public class ReservationApi {
     //i.e. the endpoint and the request body
     //and finally add the remaining fields for a reservation to be complete
     @PostMapping("/add-reservation")
-    public ResponseEntity<Reservation> reserveParkingLot(@RequestBody Reservation reservation) {
+    public ResponseEntity<Reservation> reserveParkingLot(@RequestBody ReservationDto reservation) {
         Reservation reserve = new Reservation();
+        ParkingSpot parkingSpot = parkingSpotService.getParkingSpotById(reservation.getParkingSpot().getParkingSpotId());
+        Optional<ParkingLot> parkingLot = parkingLotService.getParkingLotById(parkingSpot.getParkingLot().getParkingLotID());
 
         reserve.setCurrentDate(LocalDateTime.now());
-        reserve.setReservationDate(reservation.getReservationDate());
+        reserve.setReservationStartDate(reservation.getReservationStartDate());
+        reserve.setReservationEndDate(reservation.getReservationEndDate());
         reserve.setStartTime(reservation.getStartTime());
         reserve.setEndTime(reservation.getEndTime());
         reserve.setDuration(reservation.getDuration());
         reserve.setState(ReservationState.Confirmed);
         reserve.setCost(reservation.getCost());
+        reserve.setParkingSpot(parkingSpot);
+        reserve.setParkingLot(parkingLot.get());
 
         Reservation reserved = reservationService.saveReservation(reserve);
+        parkingSpot.setStatus(ParkingSpotStatus.Occupied);
+        parkingSpotService.save(parkingSpot);
         return ResponseEntity.ok(reserved);
     }
 
     //used to cancel a reservation but needs to be checked when the front end will be available
+    //It needs to updated so that it takes the userId and reservationId as path parameters before the operation is
+    //performed correctly
     @PatchMapping("/cancel-reservation")
-    public ResponseEntity<Void> cancelReservation(Integer reservationId) {
+    public ResponseEntity<Void> cancelReservation(@RequestBody Integer reservationId) {
 
        reservationService.cancelReservation(reservationId);
         return ResponseEntity.noContent().build();
     }
 
+    //Delete is done by simply changing the delete attribute to true so that the user will not see any reservation
+    //he has deleted but the reservations stay stored in the database
+    //It still has to be fixed so that it takes the reservationId and userId as path parameters and delete from the
+    //respective user's list of reservation
     @DeleteMapping("/delete-reservation")
-    public ResponseEntity<Void> deleteReservation(Integer reservationId) {
+    public ResponseEntity<Void> deleteReservation(@RequestBody Integer reservationId) {
 
         reservationService.deleteReservation(reservationId);
         return ResponseEntity.noContent().build();
