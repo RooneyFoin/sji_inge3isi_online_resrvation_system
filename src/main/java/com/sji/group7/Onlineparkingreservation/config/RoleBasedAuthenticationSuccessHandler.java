@@ -27,7 +27,7 @@ public class RoleBasedAuthenticationSuccessHandler implements AuthenticationSucc
                 redirectURL = "/Admin/Admin";
                 break;
             } else if (authority.getAuthority().equals("USER")) {
-                redirectURL = "/User/user";
+                redirectURL = "/reservation";
                 break;
             }
         }

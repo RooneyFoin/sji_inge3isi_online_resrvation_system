@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller;
+package com.sji.group7.Onlineparkingreservation.controller;
 
 import com.sji.group7.Onlineparkingreservation.model.User;
 import com.sji.group7.Onlineparkingreservation.service.UserService;
@@ -12,6 +12,11 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @GetMapping("/")
+    public String landingPage(){
+        return "index";
+    }
 
     @GetMapping("/login")
     public String loginPage() {
@@ -33,5 +38,15 @@ public class AuthController {
 
         userService.registerUser(user);
         return "redirect:/login";
+    }
+
+    @GetMapping("/reservation")
+    public String reservation(){
+        return "User/reservation";
+    }
+
+    @GetMapping("/history")
+    public String historyPage(){
+        return "User/history";
     }
 }

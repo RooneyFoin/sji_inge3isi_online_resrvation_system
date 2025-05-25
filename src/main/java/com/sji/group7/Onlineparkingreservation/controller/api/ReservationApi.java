@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController("/reservation")
+@RestController
 public class ReservationApi {
 
     @Autowired
@@ -31,7 +31,7 @@ public class ReservationApi {
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping
+    @GetMapping("/get-all-parkingSpots ")
     public ResponseEntity<List<LocationDto>> getAllParkingLots() {
         List<Location> locations = locationService.getAllLocations();
         List<LocationDto> locationDTOs = new ArrayList<>();
@@ -92,7 +92,7 @@ public class ReservationApi {
     //this get mapping is for the users to view just the reservations
     // they have not deleted from their history
     //it still has to be fixed so that it fetches just for a particular user
-    @GetMapping("/history")
+    @GetMapping("all-reservations")
     public ResponseEntity<List<Reservation>> getAllReservations() {
 
         List<Reservation> reservations = reservationService.getActiveReservations();
