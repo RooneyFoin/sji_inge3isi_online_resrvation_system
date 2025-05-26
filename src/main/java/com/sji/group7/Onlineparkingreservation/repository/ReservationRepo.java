@@ -12,6 +12,8 @@ public interface ReservationRepo extends JpaRepository<Reservation,Integer> {
 
     List<Reservation> findByDeletedFalse();
 
+    List<Reservation> findReservationsByDeletedFalseAndUser_Id(int userId);
+
     List<Reservation> findByStateAndDeletedFalse(ReservationState state);
 
     List<Reservation> findReservationsByParkingLot(ParkingLot parkingLot);

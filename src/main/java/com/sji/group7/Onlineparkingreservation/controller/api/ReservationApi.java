@@ -3,10 +3,7 @@ package com.sji.group7.Onlineparkingreservation.controller.api;
 import com.sji.group7.Onlineparkingreservation.dtos.LocationDto;
 import com.sji.group7.Onlineparkingreservation.dtos.ReservationDto;
 import com.sji.group7.Onlineparkingreservation.model.*;
-import com.sji.group7.Onlineparkingreservation.service.LocationService;
-import com.sji.group7.Onlineparkingreservation.service.ParkingLotService;
-import com.sji.group7.Onlineparkingreservation.service.ParkingSpotService;
-import com.sji.group7.Onlineparkingreservation.service.ReservationService;
+import com.sji.group7.Onlineparkingreservation.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +28,10 @@ public class ReservationApi {
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/get-all-parkingSpots ")
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/get-all-parkingSpots")
     public ResponseEntity<List<LocationDto>> getAllParkingLots() {
         List<Location> locations = locationService.getAllLocations();
         List<LocationDto> locationDTOs = new ArrayList<>();
@@ -45,8 +45,8 @@ public class ReservationApi {
     //To be modified to fit what is gotten from the front end
     //i.e. the endpoint and the request body
     //and finally add the remaining fields for a reservation to be complete
-    @PostMapping("/add-reservation")
-    public ResponseEntity<Reservation> reserveParkingLot(@RequestBody ReservationDto reservation) {
+    @PostMapping("/add-reservation/{userId}")
+    public ResponseEntity<Reservation> reserveParkingLot(@RequestBody ReservationDto reservation, @PathVariable int userId) {
         Reservation reserve = new Reservation();
         ParkingSpot parkingSpot = parkingSpotService.getParkingSpotById(reservation.getParkingSpot().getParkingSpotId());
         Optional<ParkingLot> parkingLot = parkingLotService.getParkingLotById(parkingSpot.getParkingLot().getParkingLotID());
@@ -59,6 +59,7 @@ public class ReservationApi {
         reserve.setDuration(reservation.getDuration());
         reserve.setState(ReservationState.Confirmed);
         reserve.setCost(reservation.getCost());
+        reserve.setUser(userService.getUserById(userId));
         reserve.setParkingSpot(parkingSpot);
         reserve.setParkingLot(parkingLot.get());
 
@@ -71,7 +72,7 @@ public class ReservationApi {
     //used to cancel a reservation but needs to be checked when the front end will be available
     //It needs to updated so that it takes the userId and reservationId as path parameters before the operation is
     //performed correctly
-    @PatchMapping("/cancel-reservation")
+    @PatchMapping("/cancel-reservation/")
     public ResponseEntity<Void> cancelReservation(@RequestBody Integer reservationId) {
 
        reservationService.cancelReservation(reservationId);
@@ -92,10 +93,10 @@ public class ReservationApi {
     //this get mapping is for the users to view just the reservations
     // they have not deleted from their history
     //it still has to be fixed so that it fetches just for a particular user
-    @GetMapping("all-reservations")
-    public ResponseEntity<List<Reservation>> getAllReservations() {
+    @GetMapping("/all-reservations/{userId}")
+    public ResponseEntity<List<Reservation>> getAllReservations(@PathVariable int userId) {
 
-        List<Reservation> reservations = reservationService.getActiveReservations();
+        List<Reservation> reservations = reservationService.getReservationsByUserId(userId);
         return ResponseEntity.ok(reservations);
     }
 }

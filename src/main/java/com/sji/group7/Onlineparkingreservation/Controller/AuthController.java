@@ -1,5 +1,6 @@
 package com.sji.group7.Onlineparkingreservation.controller;
 
+import com.sji.group7.Onlineparkingreservation.dtos.UserDto;
 import com.sji.group7.Onlineparkingreservation.model.User;
 import com.sji.group7.Onlineparkingreservation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +41,19 @@ public class AuthController {
         return "redirect:/login";
     }
 
-    @GetMapping("/reservation")
-    public String reservation(){
+    @GetMapping("/reservation/{userId}")
+    public String reservation(@PathVariable int userId,  Model model) {
+        User user = userService.getUserById(userId);
+        UserDto userDto = user.toDto();
+        model.addAttribute("user", userDto);
         return "User/reservation";
     }
 
-    @GetMapping("/history")
-    public String historyPage(){
+    @GetMapping("/history/{userId}")
+    public String historyPage(@PathVariable int userId, Model model) {
+        User user = userService.getUserById(userId);
+        UserDto userDto = user.toDto();
+        model.addAttribute("user", userDto);
         return "User/history";
     }
 }

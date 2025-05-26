@@ -33,6 +33,10 @@ public class ReservationService {
         return reservationRepo.findByDeletedFalse();
     }
 
+    public List<Reservation> getReservationsByUserId(int userId) {
+        return reservationRepo.findReservationsByDeletedFalseAndUser_Id(userId);
+    }
+
     @Transactional
     public void cancelReservation(Integer reservationId) {
         Reservation reservation = reservationRepo.findById(reservationId).get();

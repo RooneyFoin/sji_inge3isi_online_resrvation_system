@@ -5,6 +5,7 @@ import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.*;
@@ -38,16 +39,29 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/perform_login")
-                        .successHandler(roleBasedAuthHandler)
+                        .successHandler((request, response, authentication) -> {
+                            // Redirect to the originally requested URL
+                            String redirectUrl = request.getParameter("redirect");
+
+                            if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                                response.sendRedirect(redirectUrl);
+                            }
+                            roleBasedAuthHandler.onAuthenticationSuccess(request, response, authentication);
+                        })
                         .failureUrl("/signup")
                         .permitAll()
                 )
-
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Redirect to login page when unauthorized
+                            response.sendRedirect("/login");
+                        })
                 )
                 .build();
     }

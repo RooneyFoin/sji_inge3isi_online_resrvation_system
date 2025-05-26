@@ -32,4 +32,8 @@ public class UserService {
     public boolean userExists(String email) {
         return userRepo.findByEmail(email).isPresent();
     }
+
+    public User getUserById(int userId) {
+        return userRepo.findById(userId).get();
+    }
 }
