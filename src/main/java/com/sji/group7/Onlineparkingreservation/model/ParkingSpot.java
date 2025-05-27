@@ -18,12 +18,15 @@ public class ParkingSpot {
     @Id
     private String parkingSpotID;
 
-    private String location;
-
     @Enumerated(EnumType.STRING)
     private ParkingSpotStatus status;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    private Reservation reservations;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parkingLot_id")
+    private ParkingLot parkingLot;
+
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "reservation_id")
+//    private List<Reservation> reservation;
 
 }

@@ -703,6 +703,41 @@
         .tree-icon svg {
             width: 100%; height: 100%;
         }
+        .spot-count {
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: black;
+        }
+        .spot-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        /*.location-container {*/
+        /*    margin-bottom: 3rem;*/
+        /*    padding: 1.5rem;*/
+        /*    background: #f9f9f9;*/
+        /*    border-radius: 8px;*/
+        /*    box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
+        /*}*/
+
+        .location-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
+        /*.lot-header h3 {*/
+        /*    color: white;*/
+        /*}*/
+
+        /*.trees-container {*/
+        /*    position: relative;*/
+        /*    min-height: 50px;*/
+        /*    margin-bottom: 1rem;*/
+        /*}*/
     </style>
 </head>
 <body>
@@ -714,8 +749,8 @@
                 <span>ParkEase</span>
             </div>
             <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="#">reserve</a>
+                <a th:href="@{/history/{userId}(userId=${userId})}">History</a>
+<!--                <a href="#">reserve</a>-->
             </div>
         </nav>
     </div>
@@ -749,11 +784,9 @@
 
         <div class="form-group quarter-form-group fade-in">
             <label for="quarter-select">Select Quarter</label>
-            <select id="quarter-select">
+            <select id="quarter-select" class="form-control">
                 <option value="">-- Select Quarter --</option>
-                <option value="bastos">Bastos</option>
-                <option value="etoa-meki">Etoa-Meki</option>
-                <option value="mvan">Mvan</option>
+                <!-- Options will be added dynamically -->
             </select>
         </div>
 
@@ -784,13 +817,13 @@
         <span class="close-btn">×</span>
         <h2><i class="fas fa-parking"></i> Reserve Parking Spot</h2>
         <form id="reservation-form">
-            <div class="form-group">
-                <label for="name">Your Name</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="name" required placeholder="John Doe">
-                </div>
-            </div>
+<!--            <div class="form-group">-->
+<!--                <label for="name">Your Name</label>-->
+<!--                <div class="input-wrapper">-->
+<!--                    <i class="fas fa-user"></i>-->
+<!--                    <input type="text" id="name" required placeholder="John Doe">-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="form-group">
                 <label for="start-date">Start Date</label>
                 <div class="input-wrapper">
@@ -839,37 +872,70 @@
         </div>
     </div>
 </div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Extract everything from the user object
+    const user = /*[[${user}]]*/ {};
+    const userId = user?.id || 0; // Derive from user object
 
+    // Debug log
+    console.log("User object:", user);
+    console.log("Derived userId:", userId);
+    /*]]>*/
+</script>
 <script>
+    let allLocationDtos = [];
+    let reservationDto = {};
+
+    function initialize() {
+        fetch("/get-all-parkingSpots", {
+            method: "GET",
+            credentials: "include", // Send cookies (for session auth)
+            headers: {
+                "Accept": "application/json", // Force JSON response
+                // "Authorization": "Bearer YOUR_JWT_TOKEN" // If using JWT
+            }
+        })
+            .then(response => response.json())
+            .then(locationDtos => {
+                allLocationDtos = locationDtos;
+                renderParkingLocations(locationDtos);
+                populateLocationDropdown(locationDtos);
+            })
+            .catch(error => {
+            console.error('Error loading parking data:', error);
+            // Show error state
+        });
+    }
+
+    async function createReservation(reservationDto) {
+        try {
+            console.log("Request payload:", JSON.stringify(reservationDto, null, 2));
+            if (!userId || typeof userId !== 'number') {
+                alert("Invalid user session. Please reload.");
+                return;
+            }
+            const response = await fetch(`/add-reservation/${userId}`, {
+                method: 'POST',
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reservationDto)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            markSpotAsReserved(reservationDto.parkingSpot.parkingSpotId);
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating reservation:', error);
+            throw error; // Re-throw for further handling
+        }
+    }
     // --- Modern Grid-Based Parking Lot Visualization ---
-    const parkingLots = {
-        bastos: [
-            { id: 1, lot: 'Lot A', spot: 'A1', available: true },
-            { id: 2, lot: 'Lot A', spot: 'A2', available: true },
-            { id: 3, lot: 'Lot A', spot: 'A3', available: false },
-            { id: 4, lot: 'Lot A', spot: 'A4', available: true },
-            { id: 5, lot: 'Lot A', spot: 'A5', available: false },
-            { id: 6, lot: 'Lot A', spot: 'A6', available: true },
-            { id: 7, lot: 'Lot B', spot: 'B1', available: true },
-            { id: 8, lot: 'Lot B', spot: 'B2', available: false },
-            { id: 9, lot: 'Lot B', spot: 'B3', available: true },
-            { id: 10, lot: 'Lot B', spot: 'B4', available: true },
-            { id: 11, lot: 'Lot B', spot: 'B5', available: false },
-            { id: 12, lot: 'Lot B', spot: 'B6', available: true }
-        ],
-        etoa_meki: [
-            { id: 13, lot: 'Lot C', spot: 'C1', available: true },
-            { id: 14, lot: 'Lot C', spot: 'C2', available: false },
-            { id: 15, lot: 'Lot C', spot: 'C3', available: true },
-            { id: 16, lot: 'Lot C', spot: 'C4', available: true }
-        ],
-        mvan: [
-            { id: 17, lot: 'Lot D', spot: 'D1', available: true },
-            { id: 18, lot: 'Lot D', spot: 'D2', available: false },
-            { id: 19, lot: 'Lot D', spot: 'D3', available: true },
-            { id: 20, lot: 'Lot D', spot: 'D4', available: true }
-        ]
-    };
 
     let selectedSpot = null;
 
@@ -878,70 +944,166 @@
     const reserveBtn = document.getElementById('reserve-btn');
     const parkingLotGrid = document.getElementById('parking-lot-grid');
 
-    function renderParkingLotGrid(quarter) {
-        const normalizedQuarter = quarter.replace(/-/g, '_');
-        parkingLotGrid.innerHTML = '';
-        // Add trees for realism
-        [
-            { cls: 'left-top', x: 0, y: 0 },
-            { cls: 'right-top', x: 1, y: 0 },
-            { cls: 'left-bottom', x: 0, y: 1 },
-            { cls: 'right-bottom', x: 1, y: 1 }
-        ].forEach(tree => {
-            const treeDiv = document.createElement('div');
-            treeDiv.className = `tree-icon ${tree.cls}`;
-            treeDiv.innerHTML = `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#3ec46d" stroke="#228b22" stroke-width="3"/><rect x="13" y="22" width="6" height="8" rx="2" fill="#8d6748"/></svg>`;
-            parkingLotGrid.appendChild(treeDiv);
-        });
-        const spots = parkingLots[normalizedQuarter] || [];
-        const lots = {};
-        spots.forEach(spot => {
-            if (!lots[spot.lot]) lots[spot.lot] = [];
-            lots[spot.lot].push(spot);
-        });
-        Object.keys(lots).forEach(lotName => {
-            const lotSection = document.createElement('div');
-            lotSection.className = 'lot-section';
-            const lotLabel = document.createElement('div');
-            lotLabel.className = 'lot-label';
-            lotLabel.textContent = lotName;
-            lotSection.appendChild(lotLabel);
-            const spotGrid = document.createElement('div');
-            spotGrid.className = 'spot-grid';
-            lots[lotName].forEach(spot => {
-                const spotCard = document.createElement('div');
-                spotCard.className = 'parking-spot-card';
-                spotCard.classList.add(spot.available ? 'available' : 'occupied');
-                if (selectedSpot && selectedSpot.spot === spot.spot) spotCard.classList.add('selected');
-                spotCard.innerHTML = `
-                        <div class="car-icon">
-                            <span class="car-shadow"></span>
-                            <svg viewBox="0 0 40 40"><rect x="8" y="10" width="24" height="18" rx="5" fill="currentColor"/><rect x="12" y="14" width="16" height="10" rx="2" fill="#fff"/><circle cx="14" cy="30" r="3" fill="#222"/><circle cx="26" cy="30" r="3" fill="#222"/></svg>
-                        </div>
-                        <div class="number-plate">${spot.spot}</div>
-                        <span class="spot-label">${spot.spot}</span>
-                        <span class="spot-status">${spot.available ? 'Available' : 'Occupied'}</span>
-                    `;
-                if (spot.available) {
-                    spotCard.addEventListener('click', () => {
-                        selectedSpot = spot;
-                        renderParkingLotGrid(quarter);
-                        reserveBtn.disabled = false;
-                    });
-                }
-                spotGrid.appendChild(spotCard);
+    function markSpotAsReserved(parkingSpotId){
+        allLocationDtos.forEach(location => {
+            location.parkingLots?.forEach(lot => {
+                lot.parkingSpots?.forEach(spot => {
+                    if (spot.parkingSpotId === parkingSpotId){
+                        spot.parkingSpotStatus = "Occupied";
+                        selectedSpot = null;
+                    }
+                });
             });
-            lotSection.appendChild(spotGrid);
-            parkingLotGrid.appendChild(lotSection);
+        });
+        const locationDtos = [];
+        const selectedLocationDto = allLocationDtos.find(location =>
+            location.locationName.toLowerCase() === quarterSelect.value.toLowerCase()
+        );
+        locationDtos.push(selectedLocationDto)
+        renderParkingLocations(locationDtos);
+    }
+
+    function renderParkingLocations(locationDtos) {
+        // Clear the existing grid
+        parkingLotGrid.innerHTML = '';
+
+        // Process each location
+        locationDtos.forEach(locationDto => {
+            // Create location container
+            const locationContainer = document.createElement('div');
+            locationContainer.className = 'location-container';
+
+            // Add location header
+            const locationHeader = document.createElement('div');
+            locationHeader.className = 'location-header';
+            locationHeader.innerHTML = `<h2>${locationDto.locationName}</h2>`;
+            locationContainer.appendChild(locationHeader);
+
+            // Add decorative trees for this location (optional)
+            const treesContainer = document.createElement('div');
+            treesContainer.className = 'trees-container';
+            [
+                { cls: 'left-top', x: 0, y: 0 },
+                { cls: 'right-top', x: 1, y: 0 },
+                { cls: 'left-bottom', x: 0, y: 1 },
+                { cls: 'right-bottom', x: 1, y: 1 }
+            ].forEach(tree => {
+                const treeDiv = document.createElement('div');
+                treeDiv.className = `tree-icon ${tree.cls}`;
+                treeDiv.innerHTML = `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#3ec46d" stroke="#228b22" stroke-width="3"/><rect x="13" y="22" width="6" height="8" rx="2" fill="#8d6748"/></svg>`;
+                treesContainer.appendChild(treeDiv);
+            });
+            locationContainer.appendChild(treesContainer);
+
+            // Process each parking lot in the location
+            console.log(locationDto.parkingLots);
+            console.log(locationDto)
+            locationDto.parkingLots.forEach(parkingLot => {
+                const lotSection = document.createElement('div');
+                lotSection.className = 'lot-section';
+
+                // Add parking lot header
+                const lotHeader = document.createElement('div');
+                lotHeader.className = 'lot-label';
+                lotHeader.innerHTML = `
+                <h3>${parkingLot.parkingLotID}</h3>
+                <span class="spot-count">${parkingLot.parkingSpots.filter(spot => spot.parkingSpotStatus === 'Available').length}/${parkingLot.totalSpots} available</span>
+            `;
+                lotSection.appendChild(lotHeader);
+
+                // Create grid for parking spots
+                const spotGrid = document.createElement('div');
+                spotGrid.className = 'spot-grid';
+
+                // Add each parking spot
+                parkingLot.parkingSpots.forEach(spot => {
+                    const spotCard = document.createElement('div');
+                    const isAvailable = spot.parkingSpotStatus === 'Available';
+
+                    spotCard.className = `parking-spot-card ${isAvailable ? 'available' : 'occupied'}`;
+                    if (selectedSpot && selectedSpot.parkingSpotId === spot.parkingSpotId) {
+                        spotCard.classList.add('selected');
+                    }
+
+                    spotCard.innerHTML = `
+                    <div class="car-icon">
+                        <span class="car-shadow"></span>
+                        <svg viewBox="0 0 40 40"><rect x="8" y="10" width="24" height="18" rx="5" fill="currentColor"/><rect x="12" y="14" width="16" height="10" rx="2" fill="#fff"/><circle cx="14" cy="30" r="3" fill="#222"/><circle cx="26" cy="30" r="3" fill="#222"/></svg>
+                    </div>
+                    <div class="spot-info">
+                        <span class="spot-id">${spot.parkingSpotId}</span>
+                        <span class="spot-status">${spot.parkingSpotStatus.toLowerCase()}</span>
+                    </div>
+                `;
+
+                    if (isAvailable) {
+                        spotCard.addEventListener('click', (event) => {
+                            event.stopPropagation(); // Prevent event from bubbling to document
+
+                            // Toggle selection
+                            if (selectedSpot && selectedSpot.parkingSpotId === spot.parkingSpotId) {
+                                // Clicked the already selected spot -> unselect
+                                selectedSpot = null;
+                                reserveBtn.disabled = true;
+                            } else {
+                                // Select new spot
+                                selectedSpot = {
+                                    ...spot,
+                                    locationId: locationDto.locationID,
+                                    parkingLotId: parkingLot.parkingLotID
+                                };
+                                reserveBtn.disabled = false;
+                            }
+
+                            // Re-render to update UI
+                            renderParkingLocations(locationDtos);
+                        });
+                    }
+
+                    spotGrid.appendChild(spotCard);
+                });
+
+                lotSection.appendChild(spotGrid);
+                locationContainer.appendChild(lotSection);
+            });
+
+            parkingLotGrid.appendChild(locationContainer);
+        });
+    }
+
+    // Function to populate the location dropdown
+    function populateLocationDropdown(locationDtos) {
+        const quarterSelect = document.getElementById('quarter-select');
+
+        // Clear existing options except the first one
+        while (quarterSelect.options.length > 1) {
+            quarterSelect.remove(1);
+        }
+
+        // Add new options from locationDtos
+        locationDtos.forEach(location => {
+            const option = document.createElement('option');
+            option.value = location.locationName.toLowerCase().replace(/\s+/g, '-');
+            option.textContent = location.locationName;
+            quarterSelect.appendChild(option);
         });
     }
 
     quarterSelect.addEventListener('change', () => {
-        let quarter = quarterSelect.value;
-        quarter = quarter.replace(/-/g, '_');
-        if (quarter) {
+        const selectedLocationValue = quarterSelect.value;
+
+        if (selectedLocationValue) {
             parkingVisual.style.display = 'block';
-            renderParkingLotGrid(quarter);
+
+            // Find the matching location in our stored DTOs
+            const selectedLocation = allLocationDtos.find(loc =>
+                loc.locationName.toLowerCase().replace(/\s+/g, '-') === selectedLocationValue
+            );
+
+            if (selectedLocation) {
+                renderParkingLocations([selectedLocation]); // Render just this location
+            }
+
             selectedSpot = null;
             reserveBtn.disabled = true;
         } else {
@@ -1006,24 +1168,85 @@
 
     reservationForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const name = document.getElementById('name').value;
+        // const name = document.getElementById('name').value;
         const date = startDateInput.value;
         const time = startTimeInput.value;
         const hours = parseInt(hoursInput.value);
         const startDateTime = new Date(date + 'T' + time);
         const endDate = new Date(startDateTime.getTime() + hours * 60 * 60 * 1000);
         const price = hours * 100;
+
+        // Convert JavaScript Date to "YYYY-MM-DD" (LocalDate format) which is required by the api
+        function formatLocalDate(dateInput) {
+            // Handle string dates (e.g., from date pickers)
+            if (typeof dateInput === 'string') {
+                return dateInput.split('T')[0]; // Already in ISO format
+            }
+
+            // Handle Date objects
+            if (dateInput instanceof Date && !isNaN(dateInput)) {
+                return dateInput.toISOString().split('T')[0];
+            }
+
+            // Handle Moment.js/Luxon objects
+            if (dateInput?.toISOString) {
+                return dateInput.toISOString().split('T')[0];
+            }
+
+            throw new Error(`Invalid date: ${dateInput}`);
+        }
+
+        function formatLocalTime(timeInput) {
+            // Already formatted time string
+            if (typeof timeInput === 'string') {
+                if (/^\d{2}:\d{2}(:\d{2})?$/.test(timeInput)) {
+                    return timeInput.length === 5 ? `${timeInput}:00` : timeInput;
+                }
+            }
+
+            // Handle Date objects
+            if (timeInput instanceof Date) {
+                return timeInput.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+
+            throw new Error(`Invalid time: ${timeInput}`);
+        }
+
+        reservationDto = {
+            "reservationStartDate": formatLocalDate(date),
+            "reservationEndDate": formatLocalDate(endDate),
+            "startTime": formatLocalTime(time),
+            "endTime": formatLocalTime(endDate),
+            "duration": hours,
+            "cost": price,
+            "parkingSpot": {
+                "parkingSpotId": selectedSpot.parkingSpotId,
+            }
+        };
+
         reservationForm.style.display = 'none';
         receipt.style.display = 'block';
-        receiptName.textContent = name;
+        receiptName.textContent = user.name;
         receiptQuarter.textContent = quarterSelect.value;
-        receiptLotSpot.textContent = `${selectedSpot.lot} - ${selectedSpot.spot}`;
+        const locationDtos = [];
+        const selectedLocationDto = allLocationDtos.find(location =>
+            location.locationName.toLowerCase() === quarterSelect.value.toLowerCase()
+        );
+        locationDtos.push(selectedLocationDto)
+        receiptLotSpot.textContent = `${selectedSpot.parkingLotId} - ${selectedSpot.parkingSpotId}`;
         receiptStartDate.textContent = startDateTime.toLocaleDateString();
         receiptStartTime.textContent = startDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         receiptEnd.textContent = endDate.toLocaleString();
         receiptPrice.textContent = `${price} FCFA`;
         selectedSpot.available = false;
-        renderParkingLotGrid(quarterSelect.value);
+        renderParkingLocations(locationDtos);
+
+        createReservation(reservationDto);
     });
 
     closeReceiptBtn.addEventListener('click', () => {
@@ -1047,6 +1270,8 @@
             totalPriceOutput.textContent = '0 FCFA';
         }
     });
+
+    document.addEventListener('DOMContentLoaded', initialize);
 </script>
 </body>
 </html>
