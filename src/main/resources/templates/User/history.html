@@ -747,19 +747,6 @@
         }
 
         // Function to format date and time
-        function formatDateTime(dateString) {
-            const date = new Date(dateString);
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            return date.toLocaleDateString('en-US', options);
-        }
-
         function formatLocalDateTime(dateStr, timeStr) {
             // Combine date and time into an ISO-like string (local time)
             const localDateTimeStr = `${dateStr}T${timeStr}`;

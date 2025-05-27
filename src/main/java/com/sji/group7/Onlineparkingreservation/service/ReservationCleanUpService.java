@@ -27,7 +27,7 @@ public class ReservationCleanUpService {
     @Autowired
     private ParkingSpotRepo parkingSpotRepo;
 
-    @Scheduled(fixedRate = 5*60*1000)
+    @Scheduled(fixedRate = 5*1000)
     @Transactional
     public void releaseExpiredSpots(){
 
@@ -58,7 +58,7 @@ public class ReservationCleanUpService {
 
     }
 
-    @Scheduled(fixedRate = 5*60*1000)
+    @Scheduled(fixedRate = 5*1000)
     @Transactional
     public void releaseCancelledSpots(){
         try {
