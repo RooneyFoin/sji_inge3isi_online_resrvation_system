@@ -41,17 +41,6 @@ public class ReservationCleanUpService {
                 log.info("No expired reservations found.");
             }
 
-            expiredReservations.addAll(reservationRepo.
-                    findReservationsByStateAndEndTimeBeforeAndReservationEndDateIsLessThanEqual(ReservationState.Cancelled,
-                            LocalTime.now(), LocalDate.now()));
-
-            if (expiredReservations.isEmpty()) {
-                log.info("No expired reservations found.");
-            }
-
-//            entityManager.flush(); // Force SQL execution
-            log.info("Released {} spots", expiredReservations.size());
-
             expiredReservations.forEach(reservation -> {
                 ParkingSpot spot = reservation.getParkingSpot();
                 if (spot != null) {
@@ -67,6 +56,36 @@ public class ReservationCleanUpService {
             log.error("Task failed", e);  // ← Critical for debugging
         }
 
+    }
+
+    @Scheduled(fixedRate = 5*60*1000)
+    @Transactional
+    public void releaseCancelledSpots(){
+        try {
+            log.info("Checking for cancelled reservations...");
+            List<Reservation> cancelledReservations = reservationRepo.
+                    findReservationsByStateAndEndTimeBeforeAndReservationEndDateIsLessThanEqual(ReservationState.Cancelled,
+                            LocalTime.now(), LocalDate.now());
+
+            if (cancelledReservations.isEmpty()) {
+                log.info("No cancelled reservations found.");
+            }
+
+            cancelledReservations.forEach(reservation -> {
+                ParkingSpot spot = reservation.getParkingSpot();
+                if (spot != null) {
+                    spot.setStatus(ParkingSpotStatus.Available);
+//                    reservation.setState(ReservationState.Completed);
+                    parkingSpotRepo.saveAndFlush(spot);
+//                    reservationRepo.saveAndFlush(reservation);
+
+                    log.info("Released {} cancelled spots", cancelledReservations.size());
+                }
+            });
+
+        }catch (Exception e) {
+            log.error("Task failed", e);  // ← Critical for debugging
+        }
     }
 
 }

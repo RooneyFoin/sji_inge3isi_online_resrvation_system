@@ -72,8 +72,8 @@ public class ReservationApi {
     //used to cancel a reservation but needs to be checked when the front end will be available
     //It needs to updated so that it takes the userId and reservationId as path parameters before the operation is
     //performed correctly
-    @PatchMapping("/cancel-reservation/")
-    public ResponseEntity<Void> cancelReservation(@RequestBody Integer reservationId) {
+    @PatchMapping("/cancel-reservation/{reservationId}")
+    public ResponseEntity<Void> cancelReservation(@PathVariable Integer reservationId) {
 
        reservationService.cancelReservation(reservationId);
         return ResponseEntity.noContent().build();
