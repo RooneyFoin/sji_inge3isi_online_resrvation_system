@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller;
+package com.sji.group7.Onlineparkingreservation.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -15,9 +15,9 @@ public class DashboardController {
         return "Admin/Admin"; // this corresponds to admin_dashboard.html template
     }
 
-    @GetMapping("/User/user")
-    public String userDashboard(HttpSession session, Model model) {
-        // The welcomeMessage is set in the session on login success
-        return "User/user"; // this corresponds to user_dashboard.html template
-    }
+//    @GetMapping("/index")
+//    public String userDashboard(HttpSession session, Model model) {
+//        // The welcomeMessage is set in the session on login success
+//        return "index"; // this corresponds to user_dashboard.html template
+//    }
 }

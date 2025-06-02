@@ -1,5 +1,6 @@
 package com.sji.group7.Onlineparkingreservation.model;
 
+import com.sji.group7.Onlineparkingreservation.dtos.UserDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,8 +36,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Payment> payments;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Reservation> reservations;
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    private List<Reservation> reservations;
 
     public int getId() {
         return id;
@@ -102,11 +103,12 @@ public class User {
         this.payments = payments;
     }
 
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
 
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
+    public UserDto toDto(){
+        return UserDto.builder()
+                .id(id)
+                .name(name)
+                .role(role)
+                .build();
     }
 }

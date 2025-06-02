@@ -501,9 +501,9 @@
                     <span>ParkEase</span>
                 </div>
                 <div class="nav-links">
-                    <a href="index.html">Home</a>
-                    <a href="reservation.html">Reserve</a>
-                    <a href="history.html" class="active">History</a>
+<!--                    <a href="../index.html">Home</a>-->
+                    <a th:href="@{/reservation/{userId}(userId=${userId})}">Reserve</a>
+<!--                    <a href="history.html" class="active">History</a>-->
                 </div>
             </nav>
         </div>
@@ -513,25 +513,23 @@
         <h1 class="page-title fade-in">Reservation History</h1>
 
         <section class="history-section">
-            <p class="fade-in">View and manage all your past, current, and upcoming parking reservations.</p>
+            <p class="fade-in">View and manage all your past and current parking reservations.</p>
 
             <div class="history-filters fade-in">
                 <div class="filter-group">
                     <label for="status-filter">Status:</label>
                     <select id="status-filter">
                         <option value="all">All</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label for="quarter-filter">Quarter:</label>
                     <select id="quarter-filter">
                         <option value="all">All</option>
-                        <option value="bastos">Bastos</option>
-                        <option value="etoa-meki">Etoa-Meki</option>
-                        <option value="mvan">Mvan</option>
+                        <!--values will be added here dynamically-->
                     </select>
                 </div>
                 <div class="filter-group">
@@ -567,7 +565,7 @@
                 </div>
                 <h3>No Reservations Found</h3>
                 <p>You have not made any parking reservations yet, or no reservations match your current filter criteria.</p>
-                <a href="reservation.html" class="btn">
+                <a th:href="@{/reservation/{userId}(userId=${userId})}" class="btn">
                     <i class="fas fa-plus"></i> Make a Reservation
                 </a>
             </div>
@@ -592,21 +590,32 @@
         </div>
     </div>
 
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Extract everything from the user object
+        const user = /*[[${user}]]*/ {};
+        const userId = user?.id || 0; // Derive from user object
+
+        // Debug log
+        console.log("User object:", user);
+        console.log("Derived userId:", userId);
+        /*]]>*/
+    </script>
     <script>
         // API configuration
-        const API_BASE_URL = 'https://api.parkease.com/v1'; // Replace with your actual API base URL
+        const API_BASE_URL = ""; // Replace with your actual API base URL
         const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
 
         // User authentication token (would normally be obtained from login process)
-        const AUTH_TOKEN = 'user_auth_token'; // Replace with actual user authentication token
+        // const AUTH_TOKEN = 'user_auth_token'; // Replace with actual user authentication token
 
         // Helper function to make authenticated API requests
         async function apiRequest(endpoint, method = 'GET', data = null) {
             const url = `${API_BASE_URL}${endpoint}`;
 
             const headers = {
-                'Authorization': `Bearer ${AUTH_TOKEN}`,
-                'X-API-Key': API_KEY,
+                // 'Authorization': `Bearer ${AUTH_TOKEN}`,
+                // 'X-API-Key': API_KEY,
                 'Content-Type': 'application/json'
             };
 
@@ -627,6 +636,11 @@
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
+                // Handle empty responses (e.g., DELETE requests)
+                if (response.status === 204 /* No Content */ || response.headers.get('Content-Length') === '0') {
+                    return null; // or return { success: true }
+                }
+
                 return await response.json();
             } catch (error) {
                 console.error('API request failed:', error);
@@ -642,11 +656,11 @@
             try {
                 // For demo purposes, we'll use the fallback data directly
                 // In a real app, you'd uncomment this line to call the API
-                // const data = await apiRequest('/reservations');
-                // return data.reservations || [];
+                const data = await apiRequest(`/all-reservations/${userId}`);
+                return data || [];
 
                 // Using fallback data for immediate display
-                return FALLBACK_RESERVATIONS;
+                // return FALLBACK_RESERVATIONS;
             } catch (error) {
                 showError();
                 return [];
@@ -662,22 +676,26 @@
 
             try {
                 // In a real app, this would be an actual API call
-                // await apiRequest(`/reservations/${reservationId}/cancel`, 'POST');
+                await apiRequest(`/cancel-reservation/${reservationId}`, 'PATCH');
 
                 // For demo, we'll just update the local data
-                const reservation = reservations.find(res => res.id === reservationId);
-                if (reservation) {
-                    reservation.status = 'cancelled';
-                }
+                // const reservation = reservations.find(res => res.id === reservationId);
+                // if (reservation) {
+                //     reservation.status = 'cancelled';
+                // }
+
+                await fetchReservations();
+                await loadReservations();
 
                 // Refresh reservations list after successful cancellation
-                filterReservations();
+                // filterReservations();
 
                 // Close the modal
                 document.getElementById('cancel-modal').style.display = 'none';
 
                 return true;
             } catch (error) {
+                document.getElementById('cancel-modal').style.display = 'none';
                 showError('Failed to cancel reservation. Please try again.');
                 return false;
             } finally {
@@ -729,16 +747,27 @@
         }
 
         // Function to format date and time
-        function formatDateTime(dateString) {
-            const date = new Date(dateString);
+        function formatLocalDateTime(dateStr, timeStr) {
+            // Combine date and time into an ISO-like string (local time)
+            const localDateTimeStr = `${dateStr}T${timeStr}`;
+            const date = new Date(localDateTimeStr);
+
+            // Validate the date
+            if (isNaN(date.getTime())) {
+                throw new Error("Invalid date or time input");
+            }
+
+            // Formatting options
             const options = {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                hour12: true // Ensure AM/PM format
             };
+
             return date.toLocaleDateString('en-US', options);
         }
 
@@ -761,13 +790,41 @@
             try {
                 // Fetch reservations from API
                 reservations = await fetchReservations();
+                console.log(reservations)
 
                 // Update display based on filters
                 filterReservations();
+                populateLocationDropdown(reservations);
             } catch (error) {
                 console.error('Failed to load reservations:', error);
                 showError();
             }
+        }
+
+        // Function to populate the location dropdown
+        function populateLocationDropdown(reservations) {
+            const quarterSelect = document.getElementById('quarter-filter');
+
+            // Clear existing options except the first one
+            while (quarterSelect.options.length > 1) {
+                quarterSelect.remove(1);
+            }
+            // Track unique locations using a Set
+            const uniqueLocations = new Set();
+
+            // Add new options from reservations (only if unique)
+            reservations.forEach(reservation => {
+                const locationName = reservation.parkingLot?.location?.locationName;
+
+                if (locationName && !uniqueLocations.has(locationName)) {
+                    uniqueLocations.add(locationName); // Mark as added
+
+                    const option = document.createElement('option');
+                    option.value = locationName.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = locationName;
+                    quarterSelect.appendChild(option);
+                }
+            });
         }
 
         // Function to display reservations
@@ -794,16 +851,16 @@
                 let statusText = '';
                 let statusClass = '';
 
-                switch(reservation.status) {
-                    case 'confirmed':
+                switch(reservation.state) {
+                    case 'Confirmed':
                         statusText = 'Confirmed';
                         statusClass = 'status-confirmed';
                         break;
-                    case 'completed':
+                    case 'Completed':
                         statusText = 'Completed';
                         statusClass = 'status-completed';
                         break;
-                    case 'cancelled':
+                    case 'Cancelled':
                         statusText = 'Cancelled';
                         statusClass = 'status-cancelled';
                         break;
@@ -814,36 +871,36 @@
 
                 card.innerHTML = `
                     <div class="reservation-header">
-                        <h3>${reservation.quarter} - ${reservation.lot} ${reservation.spot}</h3>
-                        <p>${formatDate(reservation.startDate)}</p>
+                        <h3>${reservation.parkingLot.location.locationName} - ${reservation.parkingLot.parkingLotID} ${reservation.parkingSpot.parkingSpotID}</h3>
+                        <p>${formatDate(reservation.currentDate)}</p>
                         <span class="reservation-status ${statusClass}">${statusText}</span>
                     </div>
                     <div class="reservation-body">
                         <div class="reservation-details">
                             <div class="detail-item">
-                                <span class="label">Start Time:</span>
-                                <span class="value">${formatDateTime(reservation.startDate)}</span>
+                                <span class="label">Start Date and Time:</span>
+                                <span class="value">${formatLocalDateTime(reservation.reservationStartDate,reservation.startTime)}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="label">End Time:</span>
-                                <span class="value">${formatDateTime(reservation.endDate)}</span>
+                                <span class="label">End Date and Time:</span>
+                                <span class="value">${formatLocalDateTime(reservation.reservationEndDate,reservation.endTime)}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Duration:</span>
-                                <span class="value">${reservation.hours} ${reservation.hours > 1 ? 'hours' : 'hour'}</span>
+                                <span class="value">${reservation.duration} ${reservation.duration > 1 ? 'hours' : 'hour'}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Total Price:</span>
-                                <span class="value">${reservation.price.toLocaleString()} FCFA</span>
+                                <span class="value">${reservation.cost.toLocaleString()} FCFA</span>
                             </div>
                         </div>
                     </div>
                     <div class="reservation-footer">
-                        <button class="btn btn-sm btn-outline" onclick="viewReceipt(${reservation.id})">
+                        <button class="btn btn-sm btn-outline" onclick="viewReceipt(${reservation.reservationID})">
                             <i class="fas fa-receipt"></i> Receipt
                         </button>
-                        ${reservation.status === 'confirmed' ? `
-                            <button class="btn btn-sm btn-danger" onclick="showCancelModal(${reservation.id})">
+                        ${reservation.state === 'Confirmed' ? `
+                            <button class="btn btn-sm btn-danger" onclick="showCancelModal(${reservation.reservationID})">
                                 <i class="fas fa-times"></i> Cancel
                             </button>
                         ` : ''}
@@ -863,17 +920,17 @@
             let filtered = [...reservations];
 
             if (statusFilter !== 'all') {
-                filtered = filtered.filter(res => res.status === statusFilter);
+                filtered = filtered.filter(res => res.state === statusFilter);
             }
 
             if (quarterFilter !== 'all') {
-                filtered = filtered.filter(res => res.quarter.toLowerCase() === quarterFilter.toLowerCase());
+                filtered = filtered.filter(res => res.parkingLot.location.locationName.toLowerCase() === quarterFilter.toLowerCase());
             }
 
             if (dateFilter) {
                 const filterDate = new Date(dateFilter);
                 filtered = filtered.filter(res => {
-                    const startDate = new Date(res.startDate);
+                    const startDate = new Date(res.reservationStartDate);
                     return startDate.toDateString() === filterDate.toDateString();
                 });
             }
@@ -883,10 +940,10 @@
 
         // Function to show the cancel modal
         function showCancelModal(reservationId) {
-            const reservation = reservations.find(res => res.id === reservationId);
+            const reservation = reservations.find(res => res.reservationID === reservationId);
 
             if (reservation) {
-                document.getElementById('cancel-location').textContent = `${reservation.quarter} (${reservation.lot} ${reservation.spot})`;
+                document.getElementById('cancel-location').textContent = `${reservation.parkingLot.location.locationName} (${reservation.parkingLotId} ${reservation.parkingSpotId})`;
                 document.getElementById('cancel-modal').style.display = 'flex';
 
                 // Store the reservation ID in the yes button's data attribute
