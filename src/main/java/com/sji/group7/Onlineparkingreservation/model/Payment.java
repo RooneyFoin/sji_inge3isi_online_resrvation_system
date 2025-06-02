@@ -17,7 +17,8 @@ import java.util.Date;
 public class Payment implements Serializable {
 
     @Id
-    private String paymentID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Assuming you want it to auto-generate
+    private Integer paymentID; // Change to Integer to match reservationID type
 
     private Date paymentDate;
     private int amount;
@@ -25,8 +26,8 @@ public class Payment implements Serializable {
     @Enumerated(EnumType.STRING)
     private Method paymentMethod;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id")
+    @ManyToOne(fetch = FetchType.LAZY) // Change to ManyToOne if applicable
+    @JoinColumn(name = "reservation_id", referencedColumnName = "reservationID") // Ensure this matches
     private Reservation reservation;
 
     @ManyToOne(fetch = FetchType.LAZY)
