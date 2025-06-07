@@ -30,7 +30,7 @@ public class PricingService {
     @CacheEvict(value = "hourlyRate")
     @Transactional
     public void updateHourlyRate(double hourlyRate) {
-        Pricing pricing = pricingRepo.findById("Hourly_Rate")
+        Pricing pricing = pricingRepo.findById("HOURLY_RATE")
                 .orElseGet(() -> new Pricing("Hourly_rate", 0));
 
         pricing.setValue(hourlyRate);

@@ -2,6 +2,7 @@ package com.sji.group7.Onlineparkingreservation.controller;
 
 import com.sji.group7.Onlineparkingreservation.dtos.UserDto;
 import com.sji.group7.Onlineparkingreservation.model.User;
+import com.sji.group7.Onlineparkingreservation.service.PricingService;
 import com.sji.group7.Onlineparkingreservation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,9 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PricingService pricingService;
+
     @GetMapping("/")
     public String landingPage(){
         return "index";
@@ -21,6 +25,11 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logout(){
         return "login";
     }
 
@@ -45,7 +54,11 @@ public class AuthController {
     public String reservation(@PathVariable int userId,  Model model) {
         User user = userService.getUserById(userId);
         UserDto userDto = user.toDto();
+
+        double price = pricingService.getHourlyRate();
+
         model.addAttribute("user", userDto);
+        model.addAttribute("price", price);
         return "User/reservation";
     }
 
