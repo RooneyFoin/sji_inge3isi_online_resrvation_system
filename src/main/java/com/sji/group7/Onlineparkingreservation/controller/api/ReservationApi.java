@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.controller.api;
+package com.sji.group7.Onlineparkingreservation.Controller.api;
 
 import com.sji.group7.Onlineparkingreservation.dtos.LocationDto;
 import com.sji.group7.Onlineparkingreservation.dtos.ReservationDto;

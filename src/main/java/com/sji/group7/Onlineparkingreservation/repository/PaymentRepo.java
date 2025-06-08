@@ -10,7 +10,7 @@ public interface PaymentRepo extends JpaRepository<Payment,String> {
 
     List<Payment> findAllByUser_Id(int userId);
 
-    Payment findByPaymentID(String paymentID);
+    Payment findByPaymentID(Integer paymentID);
 
     List<Payment> findPaymentsByUser_Id(int userId);
 
