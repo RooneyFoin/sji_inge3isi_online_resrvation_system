@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller.payment;
+package com.sji.group7.Onlineparkingreservation.controller.payment;
 
 import com.sji.group7.Onlineparkingreservation.model.User;
 import com.sji.group7.Onlineparkingreservation.service.UserService;

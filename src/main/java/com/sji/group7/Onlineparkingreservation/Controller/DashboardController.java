@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller;
+package com.sji.group7.Onlineparkingreservation.controller;
 
 import com.sji.group7.Onlineparkingreservation.service.PricingService;
 import jakarta.servlet.http.HttpSession;

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Payment Cancelled</title>
+  <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -32,11 +33,24 @@
 <div class="cross">✖</div>
 <h2>Payment Cancelled</h2>
 <p>You can try again or contact support.</p>
-<button onclick="window.location.href='User/reservation.html'">Back to Reservation</button>
+<button id="success">Back to Reservation</button>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // Extract everything from the user object
+  const user = /*[[${user}]]*/ {};
+  const userId = user?.id || 0; // Derive from user object
 
+  // Debug log
+  console.log("User object:", user);
+  console.log("Derived userId:", userId);
+  /*]]>*/
+</script>
 <script>
+  document.getElementById("success").addEventListener("click", function() {
+    window.location.href = `/pay-redirect/${userId}`;
+  });
   setTimeout(() => {
-    window.location.href = 'User/reservation.html';
+    window.location.href = `/pay-redirect/${userId}`;
   }, 3000);
 </script>
 </body>

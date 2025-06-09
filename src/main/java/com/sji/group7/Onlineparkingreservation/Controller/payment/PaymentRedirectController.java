@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller.payment;
+package com.sji.group7.Onlineparkingreservation.controller.payment;
 
 import com.sji.group7.Onlineparkingreservation.model.User;
 import com.sji.group7.Onlineparkingreservation.service.UserService;
@@ -20,8 +20,10 @@ public class PaymentRedirectController {
         return "payment-success";
     }
 
-    @GetMapping("/payment-cancel")
-    public String paymentCancel() {
+    @GetMapping("/payment-cancel/{userId}")
+    public String paymentCancel(@PathVariable Integer userId ,Model model) {
+        User user = userService.getUserById(userId);
+        model.addAttribute("user", user);
         return "payment-cancel";
     }
 

@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller.view;
+package com.sji.group7.Onlineparkingreservation.controller.view;
 
 import org.springframework.stereotype.Controller;
 

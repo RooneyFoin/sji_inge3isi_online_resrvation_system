@@ -752,8 +752,9 @@
             <div class="nav-links">
                 <a th:href="@{/history/{userId}(userId=${userId})}">History</a>
                 <a href="/logout">Logout</a>
+                <span th:text="${user.name}"></span>
+                <i class="fa-solid fa-circle-user logo"></i>
             </div>
-        </nav>
     </div>
 </header>
 
@@ -763,15 +764,15 @@
         <p class="fade-in">Discover Stress-Free Parking in Yaoundé</p>
         <div class="intro-gallery fade-in">
             <div class="gallery-item">
-                <img th:src="@{/images/siyavash-lolo-oblevtksjOY-unsplash.jpg}" alt="Bastos Parking">
+                <img th:src="@{/images/mvan-parking.webp}" alt="Bastos Parking">
                 <p>Secure parking in the heart of Bastos, perfect for business and leisure.</p>
             </div>
             <div class="gallery-item">
-                <img th:src="@{/images/batuhan-dogan-4B5pWCzpIB0-unsplash.jpg}" alt="Etoa-Meki Parking">
+                <img th:src="@{/images/orig.jpeg}" alt="Etoa-Meki Parking">
                 <p>Convenient spots in Etoa-Meki, close to local markets and amenities.</p>
             </div>
             <div class="gallery-item">
-                <img th:src="@{/images/deski-jayantoro-neBp0M7mcYY-unsplash.jpg}" alt="Mvan Parking">
+                <img th:src="@{/images/Student Parking-Simple.jpg}" alt="Mvan Parking">
                 <p>Spacious parking in Mvan, ideal for commuters and visitors.</p>
             </div>
         </div>
@@ -885,6 +886,10 @@
     /*]]>*/
 </script>
 <script>
+    // To Prevent selecting a future date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').setAttribute('min', today);
+
     const parkingLotGrid = document.getElementById('parking-lot-grid');
     const beforeSelect = document.getElementById('before-select');
     let allLocationDtos = [];
@@ -1251,7 +1256,8 @@
         renderParkingLocations(locationDtos);
 
         // Store the dynamically calculated price (in FCFA) for use in stripe.html
-        sessionStorage.setItem("reservationPrice", price);
+        const price2 = price/100;
+        sessionStorage.setItem("reservationPrice", price2);
         createReservation(reservationDto);
     });
 

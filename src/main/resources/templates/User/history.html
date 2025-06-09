@@ -504,6 +504,8 @@
                 <div class="nav-links">
                     <a th:href="@{/reservation/{userId}(userId=${userId})}">Reserve</a>
                     <a href="/logout">Logout</a>
+                    <span th:text="${user.name}"></span>
+                    <i class="fa-solid fa-circle-user logo"></i>
                 </div>
             </nav>
         </div>
