@@ -3,13 +3,11 @@ package com.sji.group7.Onlineparkingreservation.Controller.api;
 import com.sji.group7.Onlineparkingreservation.dtos.LocationDto;
 import com.sji.group7.Onlineparkingreservation.dtos.ParkingLotDto;
 import com.sji.group7.Onlineparkingreservation.dtos.ParkingSpotDto;
-import com.sji.group7.Onlineparkingreservation.model.Location;
-import com.sji.group7.Onlineparkingreservation.model.ParkingLot;
-import com.sji.group7.Onlineparkingreservation.model.ParkingSpot;
-import com.sji.group7.Onlineparkingreservation.model.ParkingSpotStatus;
+import com.sji.group7.Onlineparkingreservation.model.*;
 import com.sji.group7.Onlineparkingreservation.service.LocationService;
 import com.sji.group7.Onlineparkingreservation.service.ParkingLotService;
 import com.sji.group7.Onlineparkingreservation.service.ParkingSpotService;
+import com.sji.group7.Onlineparkingreservation.service.PricingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +28,9 @@ public class ParkingController {
 
     @Autowired
     private ParkingSpotService parkingSpotService;
+
+    @Autowired
+    private PricingService pricingService;
 
     //method to create a new location with its respective lot and various spots
     @PostMapping("/new-location")
@@ -82,4 +83,19 @@ public class ParkingController {
         return ResponseEntity.ok(savedLocationDto);
     }
 
+    @PostMapping("/update-hourly-rate")
+    public ResponseEntity<Pricing> updateHourlyRate(@RequestBody Integer price){
+        Pricing pricing = pricingService.updateHourlyRate(price);
+
+        return ResponseEntity.ok(pricing);
+    }
+
+    @PostMapping("/update-location")
+    public ResponseEntity<Location> updateLocation(@RequestBody Integer locationID,  @RequestBody String locationName) {
+        Location location = locationService.getLocationById(locationID);
+        location.setLocationName(locationName);
+        Location savedLocation = locationService.saveLocation(location);
+        return ResponseEntity.ok(savedLocation);
+
+    }
 }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParkEase - Smart Parking Solution</title>
+    <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
@@ -438,10 +439,6 @@
                 <i class="fas fa-parking"></i>
                 <span>ParkEase</span>
             </div>
-<!--            <div class="nav-links">-->
-<!--                <a href="#">Home</a>-->
-<!--                <a href="User/reservation.html">reserve</a>-->
-<!--            </div>-->
         </nav>
     </div>
 </header>
@@ -480,20 +477,20 @@
     <div class="container">
         <div class="heading_container">
             <h2>About Us</h2>
-            <p>Magni quod blanditiis non minus sed aut voluptatum illum quisquam aspernatur ullam vel beatae rerum ipsum voluptatibus</p>
         </div>
         <div class="row">
             <div class="img-box">
-                <img src="/images/about-img.jpg" alt="">
+                <img th:src="@{/images/about-img.jpg}" alt="">
             </div>
             <div class="detail-box">
                 <h3>We Are Here For Help</h3>
-                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration
-                    in some form, by injected humour, or randomised words which don't look even slightly believable. If you
-                    are going to use a passage to be sure there isn't anything
-                    the middle of text.</p>
-                <p>Molestiae odio earum non qui cumque provident voluptates, repellendus exercitationem, possimus at iste corrupti officiis unde alias eius ducimus reiciendis soluta eveniet. Nobis ullam ab omnis quasi expedita.</p>
-                <a href="" class="btn">Read More</a>
+                <p>Welcome to ParkEase, your trusted solution for hassle-free parking reservations! Our mission is to
+                    simplify urban parking by connecting drivers with available spots in real-time, eliminating the
+                    stress of endless searching. With a user-friendly platform and seamless booking process, we empower
+                    you to reserve parking spaces in advance—whether for work, events, or daily errands. Designed with
+                    both drivers and parking lot operators in mind, ParkEase ensures efficiency, transparency, and fair
+                    pricing. Join us in transforming the way you park, one reservation at a time.</p>
+<!--                <a href="" class="btn" style="text-decoration: none">Read More</a>-->
             </div>
         </div>
     </div>
@@ -503,34 +500,39 @@
     <div class="container">
         <div class="heading_container">
             <h2>Why Choose Us</h2>
-            <p>Eaque nostrum quis ad aliquam autem odio assumenda accusamus, consequuntur, iste voluptate voluptates quia non dicta hic repellendus similique a facere earum omnis? Repellendus nemo, aspernatur ullam est deserunt officiis.</p>
+            <p>With instant real-time parking spot availability, seamless one-tap reservations, guaranteed spot
+                security, competitive pricing, and 24/7 customer support, we make parking effortless—so you can focus
+                on what truly matters.</p>
         </div>
         <div class="row">
             <div class="box">
                 <div class="img-box">
-                    <img src="images/w1.png" alt="">
+                    <img th:src="@{/images/w1.png}" alt="">
                 </div>
                 <div class="detail-box">
                     <h4>No Booking Fees</h4>
-                    <p>Voluptatem earum eveniet mollitia sit animi dolorum. Iste, quas? Omnis error culpa illo nihil consequatur consectetur tenetur harum modi, quae libero ducimus reiciendis voluptat excepturi.</p>
+                    <p>Reserve your perfect parking spot with zero hidden costs—what you see is what you pay. We
+                        believe in transparent pricing, so you save money while enjoying stress-free parking.</p>
                 </div>
             </div>
             <div class="box">
                 <div class="img-box">
-                    <img src="images/w2.png" alt="">
+                    <img th:src="@{/images/w2.png}" alt="">
                 </div>
                 <div class="detail-box">
                     <h4>Online Payments</h4>
-                    <p>Voluptatem earum eveniet mollitia sit animi dolorum. Iste, quas? Omnis error culpa illo nihil consequatur consectetur tenetur harum modi, quae libero ducimus reiciendis voluptat excepturi.</p>
+                    <p>Pay effortlessly via credit/debit cards or mobile wallets. Our encrypted transactions guarantee
+                        safety and speed, so you can book in seconds.</p>
                 </div>
             </div>
             <div class="box">
                 <div class="img-box">
-                    <img src="images/w3.png" alt="">
+                    <img th:src="@{/images/w3.png}" alt="">
                 </div>
                 <div class="detail-box">
                     <h4>Simple Booking Process</h4>
-                    <p>Voluptatem earum eveniet mollitia sit animi dolorum. Iste, quas? Omnis error culpa illo nihil consequatur consectetur tenetur harum modi, quae libero ducimus reiciendis voluptat excepturi.</p>
+                    <p>Our intuitive design guides you through just three simple
+                        steps: select your location, choose your perfect spot, and confirm with a tap.You can reserve parking faster than finding a street spot.</p>
                 </div>
             </div>
         </div>
@@ -547,15 +549,16 @@
                 <div class="item">
                     <div class="box">
                         <div class="detail-box">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                            <p>"This app saved my work mornings! As someone who parks downtown daily, the 'no booking
+                                fee' policy makes a real difference. My favorite feature? The 30-second booking - it's
+                                faster than brewing my morning coffee."</p>
                         </div>
                         <div class="client_id">
                             <div class="img-box">
-                                <img src="images/c1.jpg" alt="">
+                                <img th:src="@{/images/c2.jpg}" alt="">
                             </div>
                             <div class="name">
-                                <h6>Lisa Adams</h6>
-                                <p>Magna</p>
+                                <h6>Michael T.</h6>
                             </div>
                         </div>
                     </div>
@@ -563,15 +566,16 @@
                 <div class="item">
                     <div class="box">
                         <div class="detail-box">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                            <p>"I was skeptical about parking apps until I tried yours. The payment process was seamless
+                                (no errors!), and I appreciated the clear directions to my reserved spot. First time
+                                worked perfectly!"</p>
                         </div>
                         <div class="client_id">
                             <div class="img-box">
-                                <img src="images/c2.jpg" alt="">
+                                <img th:src="@{/images/c1.jpg}" alt="">
                             </div>
                             <div class="name">
-                                <h6>Michel Trout</h6>
-                                <p>Magna</p>
+                                <h6>Amina K., Abuja</h6>
                             </div>
                         </div>
                     </div>
@@ -593,40 +597,47 @@
                             <button type="submit" class="btn">Subscribe</button>
                         </form>
                         <div class="social_box">
-                            <a href=""><i class="fa fa-facebook"></i></a>
-                            <a href=""><i class="fa fa-twitter"></i></a>
-                            <a href=""><i class="fa fa-linkedin"></i></a>
-                            <a href=""><i class="fa fa-instagram"></i></a>
+                            <a href=""><i class="fa-brands fa-facebook"></i></a>
+                            <a href=""><i class="fa-brands fa-twitter"></i></a>
+                            <a href=""><i class="fa-brands fa-linkedin"></i></a>
+                            <a href=""><i class="fa-brands fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="info_col">
                     <div class="info_detail">
                         <h4>About Us</h4>
-                        <p>Necessitatibus, culpa, totam quod neque cum officiis odio, excepturi magnam incidunt voluptates sed voluptate id expedita sint! Cum veritatis iusto molestiae reiciendis deserunt vel odio incidunt, tenetur itaque.</p>
+                        <p>By combining real-time spot availability with transparent pricing and effortless booking,
+                            we eliminate the stress of finding parking. Whether you're a daily commuter or a weekend
+                            explorer, we’ve got your spot.</p>
                     </div>
                 </div>
                 <div class="info_col">
                     <div class="info_detail">
                         <h4>Online Booking</h4>
-                        <p>Accusantium quis architecto, necessitatibus libero nemo facere perferendis obcaecati pariatur magni quod praesentium provident nisi impedit nobis omnis.</p>
+                        <p>Reserve your parking spot anytime, anywhere—no calls or queues needed. Our secure platform lets you:<br>
+                            ✓ Book in 30 seconds<br>
+                            ✓ Choose preferred spots<br>
+                            ✓ Get instant e-tickets<br>
+                            ✓ Modify/cancel anytime</p>
                     </div>
                 </div>
                 <div class="info_col">
                     <h4>Contact us</h4>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
                     <div class="contact_nav">
-                        <a href="">
+                        <a href="" style="color: white; text-decoration: none">
                             <i class="fa fa-map-marker"></i>
-                            <span>Location</span>
+                            <span> Yaounde, Cameroon</span> <br>
                         </a>
-                        <a href="">
+                        <a href="" style="color: white; text-decoration: none">
                             <i class="fa fa-phone"></i>
-                            <span>Call : +01 123455678990</span>
+                            <span> +237 693 87 80 71</span> <br>
+                            <i class="fa fa-phone"></i>
+                            <span> 0800-PARK-EASE (Mon-Sun, 8am-8pm)</span> <br>
                         </a>
-                        <a href="">
+                        <a href="" style="color: white; text-decoration: none">
                             <i class="fa fa-envelope"></i>
-                            <span>Email : demo@gmail.com</span>
+                            <span>Email : parkease@parkease.ng</span>
                         </a>
                     </div>
                 </div>
@@ -637,8 +648,7 @@
 
 <footer class="footer_section">
     <div class="container">
-        <p>© <span id="displayYear"></span> All Rights Reserved By
-            <a href="https://html.design/">Free Html Templates</a>
+        <p>© <span id="displayYear"></span> All Rights Reserved By ParkEase Online Reservation
         </p>
     </div>
 </footer>
