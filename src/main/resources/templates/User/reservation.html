@@ -1250,6 +1250,8 @@
         selectedSpot.available = false;
         renderParkingLocations(locationDtos);
 
+        // Store the dynamically calculated price (in FCFA) for use in stripe.html
+        sessionStorage.setItem("reservationPrice", price);
         createReservation(reservationDto);
     });
 
@@ -1273,6 +1275,16 @@
             endDateOutput.textContent = 'Select start date and hours';
             totalPriceOutput.textContent = '0 FCFA';
         }
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("reservation-form");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            // Redirect to /checkout
+            window.location.href = `/checkout/${userId}`;
+        });
     });
 
     document.addEventListener('DOMContentLoaded', initialize);

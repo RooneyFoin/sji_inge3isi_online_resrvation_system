@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.controller;
+package com.sji.group7.Onlineparkingreservation.Controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
