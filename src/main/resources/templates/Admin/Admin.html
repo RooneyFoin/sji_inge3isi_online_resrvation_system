@@ -517,10 +517,10 @@
                 <i class="fas fa-plus"></i>
                 <span>New</span>
             </div>
-            <div class="sidebar-item" data-section="edit">
-                <i class="fas fa-edit"></i>
-                <span>Edit</span>
-            </div>
+<!--            <div class="sidebar-item" data-section="edit">-->
+<!--                <i class="fas fa-edit"></i>-->
+<!--                <span>Edit</span>-->
+<!--            </div>-->
             <div class="sidebar-item" data-section="settings">
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
@@ -617,9 +617,9 @@
                         <input type="number" id="columns" min="1" value="3" required placeholder="e.g., 6">
                     </div>
                 </div>
-                <button class="action" onclick="generateMatrix()">Generate Matrix</button>
+                <button type="button" class="action" onclick="generateMatrix()">Generate Matrix</button>
                 <div id="matrixContainer" class="matrix" style="margin-top: 10px;"></div>
-                <button class="btn" onclick="saveSpots()"><i class="fas fa-save"></i> Save Location</button>
+                <button type="submit" class="btn" onclick="saveSpots()"><i class="fas fa-save"></i> Save Location</button>
             </form>
 
         </div>
@@ -778,6 +778,8 @@
 
                 const result = await response.json();
                 console.log('✅ LocationDto posted successfully:', result);
+                newQuarterModal.style.display = 'none';
+                newQuarterForm.reset();
             } catch (error) {
                 console.error('❌ Failed to post LocationDto:', error);
             }
@@ -967,39 +969,13 @@
 
         newQuarterForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const quarterName = document.getElementById('quarter-name').value.trim().toLowerCase().replace(/\s+/g, '_');
-            const lotCount = parseInt(document.getElementById('lot-count').value);
-            const slotsPerLot = parseInt(document.getElementById('slots-per-lot').value);
-            if (!quarterName) {
-                alert('Quarter name cannot be empty!');
-                return;
-            }
             const data = getParkingData();
-            if (data.quarters[quarterName]) {
-                alert('Quarter already exists!');
-                return;
-            }
-            const spots = [];
-            let idCounter = Object.values(data.quarters).flat().length + 1;
-            for (let i = 1; i <= lotCount; i++) {
-                const lotName = `Lot ${String.fromCharCode(64 + i)}`;
-                for (let j = 1; j <= slotsPerLot; j++) {
-                    spots.push({
-                        id: idCounter++,
-                        lot: lotName,
-                        spot: `${String.fromCharCode(64 + i)}${j}`,
-                        available: true
-                    });
-                }
-            }
-            data.quarters[quarterName] = spots;
+
             saveParkingData(data);
             newQuarterModal.style.display = 'none';
             newQuarterForm.reset();
             loadDashboard();
             loadEditLocations();
-            loadReservationStatus();
-            alert('Quarter added successfully!');
         });
 
         newCloseBtn.addEventListener('click', () => {
@@ -1038,7 +1014,7 @@
                     // saveParkingData(data);
                     await loadDashboard();
                     await loadEditLocations();
-                    await loadReservationStatus();
+                    await loadReservationStatus(locationDto);
                     alert('Location deleted successfully!');
                 }
 
@@ -1093,7 +1069,7 @@
                 editQuarterModal.style.display = 'none';
                 await loadDashboard();
                 await loadEditLocations();
-                await loadReservationStatus();
+                await loadReservationStatus(locationDto);
                 alert('Location updated successfully!');
             } catch (error) {
                 console.error(error);
@@ -1109,7 +1085,7 @@
                 editQuarterModal.style.display = 'none';
                 loadDashboard();
                 loadEditQuarters();
-                loadReservationStatus();
+                loadReservationStatus(locationDto);
                 alert('Quarter deleted successfully!');
             }
         });
