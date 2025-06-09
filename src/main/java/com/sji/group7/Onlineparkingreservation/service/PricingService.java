@@ -1,6 +1,5 @@
 package com.sji.group7.Onlineparkingreservation.service;
 
-import com.sji.group7.Onlineparkingreservation.model.ParkingLot;
 import com.sji.group7.Onlineparkingreservation.model.Pricing;
 import com.sji.group7.Onlineparkingreservation.repository.PricingRepo;
 import jakarta.transaction.Transactional;
@@ -8,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PricingService {
@@ -29,11 +26,11 @@ public class PricingService {
 
     @CacheEvict(value = "hourlyRate")
     @Transactional
-    public void updateHourlyRate(double hourlyRate) {
-        Pricing pricing = pricingRepo.findById("Hourly_Rate")
+    public Pricing updateHourlyRate(double hourlyRate) {
+        Pricing pricing = pricingRepo.findById("HOURLY_RATE")
                 .orElseGet(() -> new Pricing("Hourly_rate", 0));
 
         pricing.setValue(hourlyRate);
-        pricingRepo.save(pricing);
+        return pricingRepo.save(pricing);
     }
 }

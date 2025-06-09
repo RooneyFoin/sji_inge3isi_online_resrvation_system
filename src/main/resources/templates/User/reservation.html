@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParkEase - Reserve Parking</title>
+    <link rel="icon" th:href="@{/images/favicon.png}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
@@ -750,9 +751,10 @@
             </div>
             <div class="nav-links">
                 <a th:href="@{/history/{userId}(userId=${userId})}">History</a>
-<!--                <a href="#">reserve</a>-->
+                <a href="/logout">Logout</a>
+                <span th:text="${user.name}"></span>
+                <i class="fa-solid fa-circle-user logo"></i>
             </div>
-        </nav>
     </div>
 </header>
 
@@ -762,15 +764,15 @@
         <p class="fade-in">Discover Stress-Free Parking in Yaoundé</p>
         <div class="intro-gallery fade-in">
             <div class="gallery-item">
-                <img src="./images/siyavash-lolo-oblevtksjOY-unsplash.jpg" alt="Bastos Parking">
+                <img th:src="@{/images/mvan-parking.webp}" alt="Bastos Parking">
                 <p>Secure parking in the heart of Bastos, perfect for business and leisure.</p>
             </div>
             <div class="gallery-item">
-                <img src="./images/batuhan-dogan-4B5pWCzpIB0-unsplash.jpg" alt="Etoa-Meki Parking">
+                <img th:src="@{/images/orig.jpeg}" alt="Etoa-Meki Parking">
                 <p>Convenient spots in Etoa-Meki, close to local markets and amenities.</p>
             </div>
             <div class="gallery-item">
-                <img src="./images/deski-jayantoro-neBp0M7mcYY-unsplash.jpg" alt="Mvan Parking">
+                <img th:src="@{/images/Student Parking-Simple.jpg}" alt="Mvan Parking">
                 <p>Spacious parking in Mvan, ideal for commuters and visitors.</p>
             </div>
         </div>
@@ -789,6 +791,13 @@
                 <!-- Options will be added dynamically -->
             </select>
         </div>
+
+        <div id="before-select" style="display: block">
+            <h2 style="font-size: large; margin-bottom: 50px">
+                Please choose a location first.
+            </h2>
+        </div>
+
 
         <div class="parking-lot-visual" id="parking-visual" style="display: none;">
             <h2>Available Parking Spots</h2>
@@ -817,13 +826,6 @@
         <span class="close-btn">×</span>
         <h2><i class="fas fa-parking"></i> Reserve Parking Spot</h2>
         <form id="reservation-form">
-<!--            <div class="form-group">-->
-<!--                <label for="name">Your Name</label>-->
-<!--                <div class="input-wrapper">-->
-<!--                    <i class="fas fa-user"></i>-->
-<!--                    <input type="text" id="name" required placeholder="John Doe">-->
-<!--                </div>-->
-<!--            </div>-->
             <div class="form-group">
                 <label for="start-date">Start Date</label>
                 <div class="input-wrapper">
@@ -852,7 +854,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>Total Price (100 FCFA/hour)</label>
+                <label>Total Price (<span th:text="${price}"> </span>/hour)</label>
                 <div class="input-wrapper">
                     <output id="total-price" class="price-display">0 FCFA</output>
                 </div>
@@ -884,6 +886,12 @@
     /*]]>*/
 </script>
 <script>
+    // To Prevent selecting a future date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start-date').setAttribute('min', today);
+
+    const parkingLotGrid = document.getElementById('parking-lot-grid');
+    const beforeSelect = document.getElementById('before-select');
     let allLocationDtos = [];
     let reservationDto = {};
 
@@ -942,7 +950,6 @@
     const quarterSelect = document.getElementById('quarter-select');
     const parkingVisual = document.getElementById('parking-visual');
     const reserveBtn = document.getElementById('reserve-btn');
-    const parkingLotGrid = document.getElementById('parking-lot-grid');
 
     function markSpotAsReserved(parkingSpotId){
         allLocationDtos.forEach(location => {
@@ -1093,6 +1100,7 @@
         const selectedLocationValue = quarterSelect.value;
 
         if (selectedLocationValue) {
+            beforeSelect.style.display = 'none';
             parkingVisual.style.display = 'block';
 
             // Find the matching location in our stored DTOs
@@ -1108,6 +1116,7 @@
             reserveBtn.disabled = true;
         } else {
             parkingVisual.style.display = 'none';
+            beforeSelect.style.display = 'block';
             reserveBtn.disabled = true;
         }
     });
@@ -1246,6 +1255,9 @@
         selectedSpot.available = false;
         renderParkingLocations(locationDtos);
 
+        // Store the dynamically calculated price (in FCFA) for use in stripe.html
+        const price2 = price/100;
+        sessionStorage.setItem("reservationPrice", price2);
         createReservation(reservationDto);
     });
 
@@ -1269,6 +1281,16 @@
             endDateOutput.textContent = 'Select start date and hours';
             totalPriceOutput.textContent = '0 FCFA';
         }
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("reservation-form");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            // Redirect to /checkout
+            window.location.href = `/checkout/${userId}`;
+        });
     });
 
     document.addEventListener('DOMContentLoaded', initialize);
