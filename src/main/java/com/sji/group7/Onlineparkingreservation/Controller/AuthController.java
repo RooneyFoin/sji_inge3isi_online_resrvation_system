@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.Controller;
+package com.sji.group7.Onlineparkingreservation.controller;
 
 import com.sji.group7.Onlineparkingreservation.dtos.UserDto;
 import com.sji.group7.Onlineparkingreservation.model.User;
