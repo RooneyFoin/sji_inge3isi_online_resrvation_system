@@ -1,4 +1,4 @@
-package com.sji.group7.Onlineparkingreservation.controller.payment;
+package com.sji.group7.Onlineparkingreservation.Controller.payment;
 
 import com.sji.group7.Onlineparkingreservation.model.User;
 import com.sji.group7.Onlineparkingreservation.service.UserService;
@@ -31,8 +31,8 @@ public class PaymentController {
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:8095/payment-success" + "/" + user.getId())
-                .setCancelUrl("http://localhost:8095/payment-cancel" + "/" + user.getId())
+                .setSuccessUrl("http://localhost:8096/payment-success" + "/" + user.getId())
+                .setCancelUrl("http://localhost:8096/payment-cancel" + "/" + user.getId())
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)
