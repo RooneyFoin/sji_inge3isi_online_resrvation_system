@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-    @Value("${stripe.api.public-key}")
+    @Value("${stripe.api.public-key:}")
     private String publicKey;
 
     @Autowired
